@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MinyToDo.Entity.Models;
 
@@ -9,5 +11,7 @@ namespace MinyToDo.Abstract.Services
         Task<UserCategory> InsertAsync(UserCategory userCategory);
         Task<UserCategory> UpdateAsync(UserCategory userCategory);
         Task<bool> DeleteAsync(UserCategory userCategory);
+
+        Task<IEnumerable<UserCategory>> GetAllByUserId(Guid appUserId);
     }
 }

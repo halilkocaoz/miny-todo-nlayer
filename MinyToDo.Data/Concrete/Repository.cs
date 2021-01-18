@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MinyToDo.Abstract.Repositories;
@@ -30,9 +33,11 @@ namespace MinyToDo.Data.Concrete
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll() // todo: predicate
+        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate = null)
         {
-            return await DbSet.ToListAsync();
+            return predicate != null
+            ? await DbSet.Where(predicate).ToListAsync()
+            : await DbSet.ToListAsync();
         }
 
         public async Task<TEntity> GetById(object id)

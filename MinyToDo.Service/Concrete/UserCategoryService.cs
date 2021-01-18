@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
@@ -28,6 +30,11 @@ namespace MinyToDo.Service.Concrete
         {
             var result = await _userCategoryRepository.DeleteAsync(userCategory);
             return result > 0 ? true : false;
+        }
+
+        public async Task<IEnumerable<UserCategory>> GetAllByUserId(Guid appUserId)
+        {
+            return await _userCategoryRepository.GetAll(x=> x.ApplicationUserId == appUserId);
         }
     }
 }
