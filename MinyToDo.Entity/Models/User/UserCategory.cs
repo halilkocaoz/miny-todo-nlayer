@@ -6,6 +6,10 @@ namespace MinyToDo.Entity.Models
 {
     public class UserCategory : CategoryBase
     {
+        public UserCategory()
+        {
+            
+        }
         public UserCategory(Guid appUserId, string categoryName)
         {
             Id = Guid.NewGuid();

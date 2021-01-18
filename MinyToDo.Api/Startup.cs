@@ -8,10 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Services.Abstract;
 using MinyToDo.Api.Services.Concrete;
 using MinyToDo.Data;
+using MinyToDo.Data.Concrete;
 using MinyToDo.Entity.Models;
 using MinyToDo.Service.Concrete;
 
@@ -31,6 +33,8 @@ namespace MinyToDo.Api
         {
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUserCategoryService, UserCategoryService>();
+
+            services.AddScoped<IUserCategoryRepository, UserCategoryRepository>();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -82,6 +86,7 @@ namespace MinyToDo.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
