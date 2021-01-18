@@ -36,7 +36,7 @@ namespace MinyToDo.Api
 
             services.AddScoped<IUserCategoryRepository, UserCategoryRepository>();
             
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MinyToDo.Api", Version = "v1" });
