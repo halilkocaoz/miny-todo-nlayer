@@ -44,5 +44,43 @@ namespace MinyToDo.Api.Controllers
             ? Created("", new { response = result })
             : StatusCode(500, new { error = "Sorry, the category could not add" });
         }
+
+        private bool isCategoryRelatedToAuthorizedUser(UserCategory userCategory)
+        => userCategory?.ApplicationUserId == User.GetUserId();
+
+        [HttpPut("User/{userCategoryId}")]
+        public async Task<IActionResult> UserCategoryUpdate(Guid userCategoryId, CategoryInput value)
+        {
+            var userCategory = await _userCategoryService.GetById(userCategoryId);
+            if (userCategory == null) NoContent();
+            if (isCategoryRelatedToAuthorizedUser(userCategory))
+            {
+                userCategory.Name = value.Name;
+                var result = await _userCategoryService.UpdateAsync(userCategory);
+
+                return result != null
+                ? Ok(new { response = result })
+                : StatusCode(500, new { error = "Sorry, the category could not update" });
+            }
+
+            return Forbid();
+        }
+
+        [HttpDelete("User/{userCategoryId}")]
+        public async Task<IActionResult> UserCategoryDelete(Guid userCategoryId)
+        {
+            var userCategory = await _userCategoryService.GetById(userCategoryId);
+            if (userCategory == null) return NoContent();
+            if (isCategoryRelatedToAuthorizedUser(userCategory))
+            {
+                var result = await _userCategoryService.DeleteAsync(userCategory);
+
+                return result
+                ? Ok()
+                : StatusCode(500, new { error = "Sorry, the category could not delete" });
+            }
+
+            return Forbid();
+        }
     }
 }
