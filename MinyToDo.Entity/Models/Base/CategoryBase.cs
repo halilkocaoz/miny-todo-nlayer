@@ -6,6 +6,5 @@ namespace MinyToDo.Entity.Models.Base
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
 }
