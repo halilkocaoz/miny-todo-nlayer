@@ -8,9 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using MinyToDo.Api.Models.Auth;
+using MinyToDo.Api.Services.Abstract;
 using MinyToDo.Entity.Models;
 
 namespace MinyToDo.Api.Controllers
@@ -18,12 +17,12 @@ namespace MinyToDo.Api.Controllers
     public class AuthController : ApiController
     {
         private UserManager<AppUser> _userManager;
-        private readonly SymmetricSecurityKey _key;
+        private IJwtTokenService _jwtTokenService;
 
-        public AuthController(IConfiguration configuration, UserManager<AppUser> userManager)
+        public AuthController(IJwtTokenService jwtTokenService, UserManager<AppUser> userManager)
         {
+            _jwtTokenService = jwtTokenService;
             _userManager = userManager;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]));
         }
 
         [HttpPost("Signup")]
@@ -31,43 +30,39 @@ namespace MinyToDo.Api.Controllers
         {
             if (User.Identity.IsAuthenticated) return BadRequest();
 
-            var newAppUser = new AppUser
+            var newAppUser = new AppUser // todo: automapper
             {
                 UserName = value.UserName,
                 Email = value.Email,
                 Name = value.Name,
                 Surname = value.Surname
             };
+
             var result = await _userManager.CreateAsync(newAppUser, value.Password);
-            return Ok(result.Succeeded);
+            if (result.Succeeded)
+            {
+                var token = await _jwtTokenService.CreateTokenAsync(newAppUser);
+                return Ok(new { token });
+            }
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("Signin")]
         public async Task<IActionResult> SignIn([FromBody] SignInModel value)
         {
             if (User.Identity.IsAuthenticated) return BadRequest();
+            
+            var isIdentifierEmail = value.Identifier.Contains('@');
 
-            var appUser = value.Identifier.Contains('@')
+            var appUser = isIdentifierEmail
             ? await _userManager.FindByEmailAsync(value.Identifier)
             : await _userManager.FindByNameAsync(value.Identifier);
 
-            var isPasswordAndUserRelated = appUser != null && await _userManager.CheckPasswordAsync(appUser, value.Password);
-            if (isPasswordAndUserRelated)
+            var isPasswordRelatedToFoundUser = appUser != null && await _userManager.CheckPasswordAsync(appUser, value.Password);
+            if (isPasswordRelatedToFoundUser)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, appUser.UserName),
-                };
-
-                var signCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
-
-                var token = new JwtSecurityToken(
-                    expires: DateTime.Now.AddDays(1),
-                    claims: claims,
-                    signingCredentials: signCredentials
-                );
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+                var token = await _jwtTokenService.CreateTokenAsync(appUser);
+                return Ok(new { token });
             }
             return Unauthorized();
         }
