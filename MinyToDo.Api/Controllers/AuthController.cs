@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Models.Auth;
 using MinyToDo.Api.Services.Abstract;
 using MinyToDo.Entity.Models;
@@ -18,11 +19,12 @@ namespace MinyToDo.Api.Controllers
     {
         private UserManager<AppUser> _userManager;
         private IJwtTokenService _jwtTokenService;
-
-        public AuthController(IJwtTokenService jwtTokenService, UserManager<AppUser> userManager)
+        private IUserCategoryService _userCategoryService;
+        public AuthController(IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
         {
             _jwtTokenService = jwtTokenService;
             _userManager = userManager;
+            _userCategoryService = userCategoryService;
         }
 
         [HttpPost("Signup")]
@@ -41,6 +43,9 @@ namespace MinyToDo.Api.Controllers
             var result = await _userManager.CreateAsync(newAppUser, value.Password);
             if (result.Succeeded)
             {
+                var firstCategoryForUser = new UserCategory(newAppUser.Id, "General");
+                _userCategoryService.InsertAsync(firstCategoryForUser);
+                
                 var token = await _jwtTokenService.CreateTokenAsync(newAppUser);
                 return Ok(new { token });
             }
@@ -51,7 +56,7 @@ namespace MinyToDo.Api.Controllers
         public async Task<IActionResult> SignIn([FromBody] SignInModel value)
         {
             if (User.Identity.IsAuthenticated) return BadRequest();
-            
+
             var isIdentifierEmail = value.Identifier.Contains('@');
 
             var appUser = isIdentifierEmail
