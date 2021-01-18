@@ -25,7 +25,7 @@ namespace MinyToDo.Service.Concrete
         {
             return await _userCategoryRepository.UpdateAsync(userCategory);
         }
-        
+
         public async Task<bool> DeleteAsync(UserCategory userCategory)
         {
             var result = await _userCategoryRepository.DeleteAsync(userCategory);
@@ -34,7 +34,12 @@ namespace MinyToDo.Service.Concrete
 
         public async Task<IEnumerable<UserCategory>> GetAllByUserId(Guid appUserId)
         {
-            return await _userCategoryRepository.GetAll(x=> x.ApplicationUserId == appUserId);
+            return await _userCategoryRepository.GetAll(x => x.ApplicationUserId == appUserId);
+        }
+
+        public async Task<UserCategory> GetById(Guid categoryId)
+        {
+            return await _userCategoryRepository.GetById(categoryId);
         }
     }
 }

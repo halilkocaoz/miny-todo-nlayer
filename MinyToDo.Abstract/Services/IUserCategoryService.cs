@@ -13,5 +13,6 @@ namespace MinyToDo.Abstract.Services
         Task<bool> DeleteAsync(UserCategory userCategory);
 
         Task<IEnumerable<UserCategory>> GetAllByUserId(Guid appUserId);
+        Task<UserCategory> GetById(Guid categoryId);
     }
 }
