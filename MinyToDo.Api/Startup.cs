@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MinyToDo.Api.Services.Abstract;
+using MinyToDo.Api.Services.Concrete;
 using MinyToDo.Data;
 using MinyToDo.Entity.Models;
 
@@ -25,7 +27,8 @@ namespace MinyToDo.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
