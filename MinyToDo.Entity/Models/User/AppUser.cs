@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MinyToDo.Entity.Models
 {
-    public class AppUser // todo: identityuser
+    public class AppUser : IdentityUser<Guid>
     {
         public string Name { get; set; }
         public string Surname { get; set; }
