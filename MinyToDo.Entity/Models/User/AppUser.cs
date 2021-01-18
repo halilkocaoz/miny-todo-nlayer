@@ -10,6 +10,6 @@ namespace MinyToDo.Entity.Models
         public string Surname { get; set; }
         public DateTime CreatedAt { get; private set; }
 
-        public ICollection<UserTask> Categories { get; set; }
+        public ICollection<UserCategory> Categories { get; set; }
     }
 }
