@@ -37,6 +37,11 @@ namespace MinyToDo.Service.Concrete
             return await _userCategoryRepository.GetAll(x => x.ApplicationUserId == appUserId);
         }
 
+        public async Task<IEnumerable<UserCategory>> GetAllWithTasksByUserId(Guid appUserId)
+        {
+            return await _userCategoryRepository.GetAllWithTasksAsync(x => x.ApplicationUserId == appUserId);
+        }
+
         public async Task<UserCategory> GetById(Guid categoryId)
         {
             return await _userCategoryRepository.GetById(categoryId);
