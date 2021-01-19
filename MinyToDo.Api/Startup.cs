@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
+using MinyToDo.Api.Extensions;
 using MinyToDo.Api.Services.Abstract;
 using MinyToDo.Api.Services.Concrete;
 using MinyToDo.Data;
@@ -31,45 +32,18 @@ namespace MinyToDo.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IJwtTokenService, JwtTokenService>();
-            services.AddScoped<IUserCategoryService, UserCategoryService>();
-
-            services.AddScoped<IUserCategoryRepository, UserCategoryRepository>();
+            services.AddDepencies(Configuration);
+            services.AddIdentities(Configuration);
             
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MinyToDo.Api", Version = "v1" });
             });
-
             services.AddDbContext<MinyToDoContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("dev"));
             });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
-            });
-
-            services.AddIdentityCore<AppUser>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-                options.Password.RequiredLength = 4;
-                options.Password.RequireDigit = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-            })
-            .AddRoles<AppRole>()
-            .AddEntityFrameworkStores<MinyToDoContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
