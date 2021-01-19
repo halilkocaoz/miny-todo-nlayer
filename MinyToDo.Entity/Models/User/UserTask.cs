@@ -5,6 +5,10 @@ namespace MinyToDo.Entity.Models
 {
     public class UserTask : TaskBase
     {
+        public UserTask()
+        {
+            
+        }
         public Guid UserCategoryId { get; set; }
     }
 }

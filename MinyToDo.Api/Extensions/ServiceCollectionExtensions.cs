@@ -49,8 +49,11 @@ namespace MinyToDo.Api.Extensions
         {
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUserCategoryService, UserCategoryService>();
+            services.AddScoped<IUserTaskService, UserTaskService>();
 
             services.AddScoped<IUserCategoryRepository, UserCategoryRepository>();
+            services.AddScoped<IUserTaskRepository, UserTaskRepository>();
+
             return services;
         }
     }

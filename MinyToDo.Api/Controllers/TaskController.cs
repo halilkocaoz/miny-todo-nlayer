@@ -2,20 +2,27 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Extensions;
+using MinyToDo.Api.Models;
 using MinyToDo.Entity.Models;
 
 namespace MinyToDo.Api.Controllers
 {
+    [Authorize]
     public class TaskController : ApiController
     {
         private IUserTaskService _userTaskService;
         private IUserCategoryService _userCategoryService;
+        private IMapper _mapper;
 
-        public TaskController(IUserTaskService userTaskService)
+        public TaskController(IUserTaskService userTaskService, IUserCategoryService userCategoryService, IMapper mapper)
         {
+            _mapper = mapper;
+            _userCategoryService = userCategoryService;
             _userTaskService = userTaskService;
         }
 
@@ -25,6 +32,9 @@ namespace MinyToDo.Api.Controllers
             var selectedCategory = await _userCategoryService.GetById(userCategoryId);
             return selectedCategory?.ApplicationUserId == User.GetUserId();
         }
+
+        private async Task<bool> selectedTaskBelongsToUser(UserTask userTask)
+                => await selectedCategoryBelongsToUser(userTask.UserCategoryId);
 
         [HttpGet("User/{userCategoryId}")]
         public async Task<IActionResult> GetUserTasksByCategoryIdAsync([FromRoute] Guid userCategoryId)
@@ -36,35 +46,53 @@ namespace MinyToDo.Api.Controllers
             }
             return Forbid();
         }
-        public class UserTaskInput
-        {
-            [Required]
-            public Guid? UserCategoryId { get; set; }
-            [Required]
-            [MaxLength(200)]
-            public string Content { get; set; }
-            public string LongDescription { get; set; }
-            public DateTime DueDate { get; set; } = DateTime.Now.AddDays(1);
-        }
 
         [HttpPost("User")]
-        public async Task<IActionResult> UserTaskCreate([FromBody] UserTaskInput value)
+        public async Task<IActionResult> CreateUserTask([FromBody] UserTaskInput value)
         {
             if (await selectedCategoryBelongsToUser(value.UserCategoryId.Value))
             {
-                var newTask = new UserTask // todo: automapper
-                {
-                    UserCategoryId = value.UserCategoryId.Value,
-                    Content = value.Content,
-                    LongDescription = value.LongDescription,
-                    DueDate = value.DueDate
-                };
+                var newTask = _mapper.Map<UserTask>(value);
                 newTask.CreatedAt = DateTime.Now;
                 var result = await _userTaskService.InsertAsync(newTask);
 
                 return result != null
                 ? Created("", new { result })
-                : StatusCode(500, new { error = "Sorry, the task could not be added" });
+                : StatusCode(500, new { error = "Sorry, the task could not add" });
+            }
+            return Forbid();
+        }
+
+        [HttpPut("User/{userTaskId}")]
+        public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskInput value)
+        {
+            var updatingTask = await _userTaskService.GetById(userTaskId);
+            if (updatingTask == null) return NoContent();
+
+            if (await selectedCategoryBelongsToUser(value.UserCategoryId.Value))
+            {
+                _mapper.Map(value, updatingTask);
+                var result = await _userTaskService.UpdateAsync(updatingTask);
+
+                return result != null
+                ? Ok(new { result })
+                : StatusCode(500, new { error = "Sorry, the task could not update" });
+            }
+            return Forbid();
+        }
+
+        [HttpDelete("User/{userTaskId}")]
+        public async Task<IActionResult> DeleteUserTask([FromRoute] Guid userTaskId)
+        {
+            var deletingTask = await _userTaskService.GetById(userTaskId);
+            if (deletingTask == null) return NoContent();
+
+            if (await selectedTaskBelongsToUser(deletingTask))
+            {
+                var result = await _userTaskService.DeleteAsync(deletingTask);
+                return result
+                ? Ok()
+                : StatusCode(500, new { error = "Sorry, the task could not delete" });
             }
             return Forbid();
         }
