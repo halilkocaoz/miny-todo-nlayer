@@ -35,7 +35,7 @@ namespace MinyToDo.Api.Controllers
         }
 
         [HttpPost("User")]
-        public async Task<IActionResult> UserCategoryCreate([FromBody] CategoryInput value)
+        public async Task<IActionResult> CreateUserCategory([FromBody] CategoryInput value)
         {
             var newUserCategory = new UserCategory(User.GetUserId(), value.Name);
             var result = await _userCategoryService.InsertAsync(newUserCategory);
@@ -49,14 +49,14 @@ namespace MinyToDo.Api.Controllers
         => userCategory?.ApplicationUserId == User.GetUserId();
 
         [HttpPut("User/{userCategoryId}")]
-        public async Task<IActionResult> UserCategoryUpdate(Guid userCategoryId, CategoryInput value)
+        public async Task<IActionResult> UpdateUserCategory(Guid userCategoryId, CategoryInput value)
         {
-            var userCategory = await _userCategoryService.GetById(userCategoryId);
-            if (userCategory == null) NoContent();
-            if (isCategoryRelatedToAuthorizedUser(userCategory))
+            var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
+            if (toBeUpdatedCategory == null) NoContent();
+            if (isCategoryRelatedToAuthorizedUser(toBeUpdatedCategory))
             {
-                userCategory.Name = value.Name;
-                var result = await _userCategoryService.UpdateAsync(userCategory);
+                toBeUpdatedCategory.Name = value.Name;
+                var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory);
 
                 return result != null
                 ? Ok(new { response = result })
@@ -67,13 +67,13 @@ namespace MinyToDo.Api.Controllers
         }
 
         [HttpDelete("User/{userCategoryId}")]
-        public async Task<IActionResult> UserCategoryDelete(Guid userCategoryId)
+        public async Task<IActionResult> DeleteUserCategory(Guid userCategoryId)
         {
-            var userCategory = await _userCategoryService.GetById(userCategoryId);
-            if (userCategory == null) return NoContent();
-            if (isCategoryRelatedToAuthorizedUser(userCategory))
+            var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
+            if (toBeDeletedCategory == null) return NoContent();
+            if (isCategoryRelatedToAuthorizedUser(toBeDeletedCategory))
             {
-                var result = await _userCategoryService.DeleteAsync(userCategory);
+                var result = await _userCategoryService.DeleteAsync(toBeDeletedCategory);
 
                 return result
                 ? Ok()

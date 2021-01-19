@@ -52,9 +52,9 @@ namespace MinyToDo.Api.Controllers
         {
             if (await selectedCategoryBelongsToUser(value.UserCategoryId.Value))
             {
-                var newTask = _mapper.Map<UserTask>(value);
-                newTask.CreatedAt = DateTime.Now;
-                var result = await _userTaskService.InsertAsync(newTask);
+                var newUserTask = _mapper.Map<UserTask>(value);
+                newUserTask.CreatedAt = DateTime.Now;
+                var result = await _userTaskService.InsertAsync(newUserTask);
 
                 return result != null
                 ? Created("", new { result })
@@ -66,13 +66,13 @@ namespace MinyToDo.Api.Controllers
         [HttpPut("User/{userTaskId}")]
         public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskInput value)
         {
-            var updatingTask = await _userTaskService.GetById(userTaskId);
-            if (updatingTask == null) return NoContent();
+            var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
+            if (toBeUpdatedTask == null) return NoContent();
 
             if (await selectedCategoryBelongsToUser(value.UserCategoryId.Value))
             {
-                _mapper.Map(value, updatingTask);
-                var result = await _userTaskService.UpdateAsync(updatingTask);
+                _mapper.Map(value, toBeUpdatedTask);
+                var result = await _userTaskService.UpdateAsync(toBeUpdatedTask);
 
                 return result != null
                 ? Ok(new { result })
@@ -84,12 +84,12 @@ namespace MinyToDo.Api.Controllers
         [HttpDelete("User/{userTaskId}")]
         public async Task<IActionResult> DeleteUserTask([FromRoute] Guid userTaskId)
         {
-            var deletingTask = await _userTaskService.GetById(userTaskId);
-            if (deletingTask == null) return NoContent();
+            var toBeDeletedTask = await _userTaskService.GetById(userTaskId);
+            if (toBeDeletedTask == null) return NoContent();
 
-            if (await selectedTaskBelongsToUser(deletingTask))
+            if (await selectedTaskBelongsToUser(toBeDeletedTask))
             {
-                var result = await _userTaskService.DeleteAsync(deletingTask);
+                var result = await _userTaskService.DeleteAsync(toBeDeletedTask);
                 return result
                 ? Ok()
                 : StatusCode(500, new { error = "Sorry, the task could not delete" });
