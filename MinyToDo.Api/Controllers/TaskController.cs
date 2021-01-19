@@ -15,6 +15,7 @@ namespace MinyToDo.Api.Controllers
     [Authorize]
     public class TaskController : ApiController
     {
+        #region _
         private IUserTaskService _userTaskService;
         private IUserCategoryService _userCategoryService;
         private IMapper _mapper;
@@ -25,7 +26,10 @@ namespace MinyToDo.Api.Controllers
             _userCategoryService = userCategoryService;
             _userTaskService = userTaskService;
         }
+        #endregion
 
+        #region  checks
+        // todo: it is duplicate region, there are similiar codes in categorycontroller.
         [NonAction]
         private async Task<bool> selectedCategoryBelongsToUser(Guid userCategoryId)
         {
@@ -35,9 +39,11 @@ namespace MinyToDo.Api.Controllers
 
         private async Task<bool> selectedTaskBelongsToUser(UserTask userTask)
                 => await selectedCategoryBelongsToUser(userTask.UserCategoryId);
+        #endregion
 
+        #region read
         [HttpGet("User/{userCategoryId}")]
-        public async Task<IActionResult> GetUserTasksByCategoryIdAsync([FromRoute] Guid userCategoryId)
+        public async Task<IActionResult> GetUserTasksByCategoryId([FromRoute] Guid userCategoryId)
         {
             if (await selectedCategoryBelongsToUser(userCategoryId))
             {
@@ -46,7 +52,9 @@ namespace MinyToDo.Api.Controllers
             }
             return Forbid();
         }
+        #endregion
 
+        #region create - update - delete
         [HttpPost("User")]
         public async Task<IActionResult> CreateUserTask([FromBody] UserTaskInput value)
         {
@@ -59,6 +67,7 @@ namespace MinyToDo.Api.Controllers
                 return result != null
                 ? Created("", new { result })
                 : StatusCode(500, new { error = "Sorry, the task could not add" });
+                // todo: find another http status code instead of 500
             }
             return Forbid();
         }
@@ -77,6 +86,8 @@ namespace MinyToDo.Api.Controllers
                 return result != null
                 ? Ok(new { result })
                 : StatusCode(500, new { error = "Sorry, the task could not update" });
+                // todo: find another http status code instead of 500
+
             }
             return Forbid();
         }
@@ -93,8 +104,10 @@ namespace MinyToDo.Api.Controllers
                 return result
                 ? Ok()
                 : StatusCode(500, new { error = "Sorry, the task could not delete" });
+                // todo: find another http status code instead of 500
             }
             return Forbid();
         }
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,12 +21,15 @@ namespace MinyToDo.Api.Controllers
         }
 
         [HttpGet("User")]
-        public async Task<IActionResult> GetAllCategoriesForAuthorizedUser()
+        public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks = false)
         {
-            var result = await _userCategoryService.GetAllByUserId(User.GetUserId());
+            var result = withTasks
+            ? await _userCategoryService.GetAllWithTasksByUserId(User.GetUserId())
+            : await _userCategoryService.GetAllByUserId(User.GetUserId());
+
             return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
         }
-        
+
         public class CategoryInput
         {
             [Required]
@@ -43,10 +47,12 @@ namespace MinyToDo.Api.Controllers
             return result != null
             ? Created("", new { response = result })
             : StatusCode(500, new { error = "Sorry, the category could not add" });
+            // todo: find another http status code instead of 500
         }
-
+        // todo: it is duplicate code, there are similiar codes in taskcontroller.
         private bool isCategoryRelatedToAuthorizedUser(UserCategory userCategory)
         => userCategory?.ApplicationUserId == User.GetUserId();
+        
 
         [HttpPut("User/{userCategoryId}")]
         public async Task<IActionResult> UpdateUserCategory(Guid userCategoryId, CategoryInput value)
@@ -61,6 +67,7 @@ namespace MinyToDo.Api.Controllers
                 return result != null
                 ? Ok(new { response = result })
                 : StatusCode(500, new { error = "Sorry, the category could not update" });
+                // todo: find another http status code instead of 500
             }
 
             return Forbid();
@@ -78,6 +85,7 @@ namespace MinyToDo.Api.Controllers
                 return result
                 ? Ok()
                 : StatusCode(500, new { error = "Sorry, the category could not delete" });
+                // todo: find another http status code instead of 500
             }
 
             return Forbid();
