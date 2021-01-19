@@ -10,6 +10,6 @@ namespace MinyToDo.Entity.Models.Base
         public DateTime CreatedAt { get; set; }
         public DateTime DueDate { get; set; }
         public bool Completed { get; set; }
-        public short Priority { get; set; } // todo: refactor to enum
+        // public short Priority { get; set; } // todo: refactor to enum
     }
 }
