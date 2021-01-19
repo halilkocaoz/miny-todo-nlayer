@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MinyToDo.Abstract.Repositories;
@@ -30,9 +31,15 @@ namespace MinyToDo.Service.Concrete
             return await _userTaskRepository.DeleteAsync(userTask) > 0 ? true : false;
         }
 
-        public Task<IEnumerable<UserTask>> GetAllByCategoryId(System.Guid categoryId)
+        public async Task<IEnumerable<UserTask>> GetAllByCategoryId(Guid categoryId)
         {
-            return _userTaskRepository.GetAll(task => task.UserCategoryId == categoryId);
+            return await _userTaskRepository.GetAll(task => task.UserCategoryId == categoryId);
+        }
+
+        public async Task<UserTask> GetById(Guid userTaskId)
+        {
+            return await _userTaskRepository.GetById(userTaskId);
+
         }
     }
 }
