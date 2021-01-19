@@ -1,22 +1,14 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MinyToDo.Abstract.Repositories;
-using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Extensions;
-using MinyToDo.Api.Services.Abstract;
-using MinyToDo.Api.Services.Concrete;
+using MinyToDo.Api.Helper;
 using MinyToDo.Data;
-using MinyToDo.Data.Concrete;
-using MinyToDo.Entity.Models;
-using MinyToDo.Service.Concrete;
 
 namespace MinyToDo.Api
 {
@@ -34,6 +26,7 @@ namespace MinyToDo.Api
         {
             services.AddDepencies(Configuration);
             services.AddIdentities(Configuration);
+            services.AddAutoMapper(typeof(AutoMappers).Assembly);
             
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
