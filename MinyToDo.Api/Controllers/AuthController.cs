@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
@@ -20,8 +21,10 @@ namespace MinyToDo.Api.Controllers
         private UserManager<AppUser> _userManager;
         private IJwtTokenService _jwtTokenService;
         private IUserCategoryService _userCategoryService;
-        public AuthController(IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
+        private IMapper _mapper;
+        public AuthController(IMapper mapper,IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
         {
+            _mapper = mapper;
             _jwtTokenService = jwtTokenService;
             _userManager = userManager;
             _userCategoryService = userCategoryService;
@@ -32,19 +35,15 @@ namespace MinyToDo.Api.Controllers
         {
             if (User.Identity.IsAuthenticated) return BadRequest();
 
-            var newAppUser = new AppUser // todo: automapper
-            {
-                UserName = value.UserName,
-                Email = value.Email,
-                Name = value.Name,
-                Surname = value.Surname
-            };
+            var newAppUser = _mapper.Map<AppUser>(value);
 
             var result = await _userManager.CreateAsync(newAppUser, value.Password);
             if (result.Succeeded)
             {
                 var firstCategoryForUser = new UserCategory(newAppUser.Id, "General");
+                #pragma warning disable 4014
                 _userCategoryService.InsertAsync(firstCategoryForUser);
+                #pragma warning disable 4014
                 
                 var token = await _jwtTokenService.CreateTokenAsync(newAppUser);
                 return Ok(new { token });
