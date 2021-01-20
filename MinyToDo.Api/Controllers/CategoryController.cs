@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +18,10 @@ namespace MinyToDo.Api.Controllers
         {
             _userCategoryService = userCategoryService;
         }
-
+        private bool categoryRelatedToAuthorizedUser(UserCategory userCategory)
+                => userCategory?.ApplicationUserId == User.GetUserId();
+        
+        #region user: read
         [HttpGet("User")]
         public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks = false)
         {
@@ -29,7 +31,9 @@ namespace MinyToDo.Api.Controllers
 
             return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
         }
+        #endregion
 
+        #region user: create - update - delete
         public class CategoryInput
         {
             [Required]
@@ -46,28 +50,22 @@ namespace MinyToDo.Api.Controllers
 
             return result != null
             ? Created("", new { response = result })
-            : StatusCode(500, new { error = "Sorry, the category could not add" });
-            // todo: find another http status code instead of 500
+            : BadRequest(new { error = "Sorry, the category could not add" });
         }
-        // todo: it is duplicate code, there are similiar codes in taskcontroller.
-        private bool isCategoryRelatedToAuthorizedUser(UserCategory userCategory)
-        => userCategory?.ApplicationUserId == User.GetUserId();
-        
 
         [HttpPut("User/{userCategoryId}")]
         public async Task<IActionResult> UpdateUserCategory(Guid userCategoryId, CategoryInput value)
         {
             var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeUpdatedCategory == null) NoContent();
-            if (isCategoryRelatedToAuthorizedUser(toBeUpdatedCategory))
+            if (categoryRelatedToAuthorizedUser(toBeUpdatedCategory))
             {
                 toBeUpdatedCategory.Name = value.Name;
                 var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory);
 
                 return result != null
                 ? Ok(new { response = result })
-                : StatusCode(500, new { error = "Sorry, the category could not update" });
-                // todo: find another http status code instead of 500
+                : BadRequest(new { error = "Sorry, the category could not update" });
             }
 
             return Forbid();
@@ -78,17 +76,17 @@ namespace MinyToDo.Api.Controllers
         {
             var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeDeletedCategory == null) return NoContent();
-            if (isCategoryRelatedToAuthorizedUser(toBeDeletedCategory))
+            if (categoryRelatedToAuthorizedUser(toBeDeletedCategory))
             {
                 var result = await _userCategoryService.DeleteAsync(toBeDeletedCategory);
 
                 return result
                 ? Ok()
-                : StatusCode(500, new { error = "Sorry, the category could not delete" });
-                // todo: find another http status code instead of 500
+                : BadRequest(new { error = "Sorry, the category could not delete" });
             }
 
             return Forbid();
         }
+        #endregion
     }
 }

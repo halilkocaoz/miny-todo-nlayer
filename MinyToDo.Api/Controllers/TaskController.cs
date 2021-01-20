@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -28,24 +27,23 @@ namespace MinyToDo.Api.Controllers
         }
         #endregion
 
-        #region  checks
-        // todo: it is duplicate region, there are similiar codes in categorycontroller.
+        #region  user: checks
         [NonAction]
-        private async Task<bool> selectedCategoryBelongsToUser(Guid userCategoryId)
+        private async Task<bool> selectedCategoryRelatedToUser(Guid userCategoryId)
         {
             var selectedCategory = await _userCategoryService.GetById(userCategoryId);
             return selectedCategory?.ApplicationUserId == User.GetUserId();
         }
 
         private async Task<bool> selectedTaskBelongsToUser(UserTask userTask)
-                => await selectedCategoryBelongsToUser(userTask.UserCategoryId);
+                => await selectedCategoryRelatedToUser(userTask.UserCategoryId);
         #endregion
 
-        #region read
+        #region user: read
         [HttpGet("User/{userCategoryId}")]
         public async Task<IActionResult> GetUserTasksByCategoryId([FromRoute] Guid userCategoryId)
         {
-            if (await selectedCategoryBelongsToUser(userCategoryId))
+            if (await selectedCategoryRelatedToUser(userCategoryId))
             {
                 var result = await _userTaskService.GetAllByCategoryId(userCategoryId);
                 return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
@@ -54,11 +52,11 @@ namespace MinyToDo.Api.Controllers
         }
         #endregion
 
-        #region create - update - delete
+        #region user: create - update - delete
         [HttpPost("User")]
         public async Task<IActionResult> CreateUserTask([FromBody] UserTaskInput value)
         {
-            if (await selectedCategoryBelongsToUser(value.UserCategoryId.Value))
+            if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 var newUserTask = _mapper.Map<UserTask>(value);
                 newUserTask.CreatedAt = DateTime.Now;
@@ -66,8 +64,7 @@ namespace MinyToDo.Api.Controllers
 
                 return result != null
                 ? Created("", new { result })
-                : StatusCode(500, new { error = "Sorry, the task could not add" });
-                // todo: find another http status code instead of 500
+                : BadRequest(new { error = "Sorry, the task could not add" });
             }
             return Forbid();
         }
@@ -78,15 +75,14 @@ namespace MinyToDo.Api.Controllers
             var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
             if (toBeUpdatedTask == null) return NoContent();
 
-            if (await selectedCategoryBelongsToUser(value.UserCategoryId.Value))
+            if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 _mapper.Map(value, toBeUpdatedTask);
                 var result = await _userTaskService.UpdateAsync(toBeUpdatedTask);
 
                 return result != null
                 ? Ok(new { result })
-                : StatusCode(500, new { error = "Sorry, the task could not update" });
-                // todo: find another http status code instead of 500
+                : BadRequest(new { error = "Sorry, the task could not update" });
 
             }
             return Forbid();
@@ -103,8 +99,7 @@ namespace MinyToDo.Api.Controllers
                 var result = await _userTaskService.DeleteAsync(toBeDeletedTask);
                 return result
                 ? Ok()
-                : StatusCode(500, new { error = "Sorry, the task could not delete" });
-                // todo: find another http status code instead of 500
+                : BadRequest(new { error = "Sorry, the task could not delete" });
             }
             return Forbid();
         }
