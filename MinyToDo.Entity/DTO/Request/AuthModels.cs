@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MinyToDo.Api.Models.Auth
+namespace MinyToDo.Entity.DTO.Request
 {
-    public class SignInModel
+    public class SignInRequest
     {
         [Required(ErrorMessage = "Please, pass your username or email address")]
         public string Identifier { get; set; } // username or email
@@ -10,7 +10,7 @@ namespace MinyToDo.Api.Models.Auth
         [Required(ErrorMessage = "Please, pass your password")]
         public string Password { get; set; }
     }
-    public class SignUpModel
+    public class SignUpRequest
     {
         [Required(ErrorMessage = "Please, pass your email adress")]
         [EmailAddress(ErrorMessage = "Please, pass your correct e-mail adress")]

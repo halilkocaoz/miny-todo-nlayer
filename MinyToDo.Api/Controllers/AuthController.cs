@@ -3,7 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
-using MinyToDo.Api.Models.Auth;
+using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Api.Services.Abstract;
 using MinyToDo.Entity.Models;
 
@@ -15,7 +15,7 @@ namespace MinyToDo.Api.Controllers
         private IJwtTokenService _jwtTokenService;
         private IUserCategoryService _userCategoryService;
         private IMapper _mapper;
-        public AuthController(IMapper mapper,IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
+        public AuthController(IMapper mapper, IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
         {
             _mapper = mapper;
             _jwtTokenService = jwtTokenService;
@@ -24,7 +24,7 @@ namespace MinyToDo.Api.Controllers
         }
 
         [HttpPost("Signup")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpModel value)
+        public async Task<IActionResult> SignUp([FromBody] SignUpRequest value)
         {
             if (User.Identity.IsAuthenticated) return BadRequest();
 
@@ -33,11 +33,10 @@ namespace MinyToDo.Api.Controllers
             var result = await _userManager.CreateAsync(newAppUser, value.Password);
             if (result.Succeeded)
             {
-                var firstCategoryForUser = new UserCategory(newAppUser.Id, "General");
                 #pragma warning disable 4014
-                _userCategoryService.InsertAsync(firstCategoryForUser);
+                _userCategoryService.InsertAsync(newAppUser.Id, new UserCategoryRequest { Name = "General" });
                 #pragma warning disable 4014
-                
+
                 var token = await _jwtTokenService.CreateTokenAsync(newAppUser);
                 return Ok(new { token });
             }
@@ -45,7 +44,7 @@ namespace MinyToDo.Api.Controllers
         }
 
         [HttpPost("Signin")]
-        public async Task<IActionResult> SignIn([FromBody] SignInModel value)
+        public async Task<IActionResult> SignIn([FromBody] SignInRequest value)
         {
             if (User.Identity.IsAuthenticated) return BadRequest();
 

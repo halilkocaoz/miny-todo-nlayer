@@ -1,6 +1,5 @@
 using AutoMapper;
-using MinyToDo.Api.Models;
-using MinyToDo.Api.Models.Auth;
+using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Entity.Models;
 
 namespace MinyToDo.Api.Helper
@@ -9,8 +8,8 @@ namespace MinyToDo.Api.Helper
     {
         public AutoMappers()
         {
-            CreateMap<UserTaskInput, UserTask>();
-            CreateMap<SignUpModel, AppUser>();
+            CreateMap<UserTaskRequest, UserTask>();
+            CreateMap<SignUpRequest, AppUser>();
         }
     }
 }
