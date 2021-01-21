@@ -74,8 +74,9 @@ namespace MinyToDo.Api.Controllers
         {
             var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
             if (toBeUpdatedTask == null) return NoContent();
-
-            if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
+            
+            var isSelectedCategorySame = toBeUpdatedTask.UserCategoryId == value.UserCategoryId.Value;
+            if (isSelectedCategorySame || await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 _mapper.Map(value, toBeUpdatedTask);
                 var result = await _userTaskService.UpdateAsync(toBeUpdatedTask);
@@ -83,7 +84,6 @@ namespace MinyToDo.Api.Controllers
                 return result != null
                 ? Ok(new { result })
                 : BadRequest(new { error = "Sorry, the task could not update" });
-
             }
             return Forbid();
         }

@@ -7,9 +7,9 @@ namespace MinyToDo.Api.Models
     {
         public UserTaskInput()
         {
-            
+
         }
-        
+
         [Required]
         public Guid? UserCategoryId { get; set; }
         [Required]
@@ -17,5 +17,6 @@ namespace MinyToDo.Api.Models
         public string Content { get; set; }
         public string LongDescription { get; set; }
         public DateTime DueDate { get; set; } = DateTime.Now.AddDays(1);
+        public bool Completed { get; set; } = false;
     }
 }
