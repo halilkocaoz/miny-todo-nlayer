@@ -1,11 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MinyToDo.Api.Models
+namespace MinyToDo.Entity.DTO.Request
 {
-    public class UserTaskInput
+    public class UserTaskRequest
     {
-        public UserTaskInput()
+        public UserTaskRequest()
         {
 
         }

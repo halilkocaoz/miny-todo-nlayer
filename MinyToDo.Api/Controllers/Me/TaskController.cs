@@ -1,27 +1,25 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Extensions;
-using MinyToDo.Api.Models;
+using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Entity.Models;
 
-namespace MinyToDo.Api.Controllers
+namespace MinyToDo.Api.Controllers.Me
 {
+    [Route("Api/Me/[controller]")]
     [Authorize]
     public class TaskController : ApiController
     {
         #region _
         private IUserTaskService _userTaskService;
         private IUserCategoryService _userCategoryService;
-        private IMapper _mapper;
 
-        public TaskController(IUserTaskService userTaskService, IUserCategoryService userCategoryService, IMapper mapper)
+        public TaskController(IUserTaskService userTaskService, IUserCategoryService userCategoryService)
         {
-            _mapper = mapper;
             _userCategoryService = userCategoryService;
             _userTaskService = userTaskService;
         }
@@ -39,8 +37,8 @@ namespace MinyToDo.Api.Controllers
                 => await selectedCategoryRelatedToUser(userTask.UserCategoryId);
         #endregion
 
-        #region user: read
-        [HttpGet("User/{userCategoryId}")]
+        #region read
+        [HttpGet("{userCategoryId}")]
         public async Task<IActionResult> GetUserTasksByCategoryId([FromRoute] Guid userCategoryId)
         {
             if (await selectedCategoryRelatedToUser(userCategoryId))
@@ -48,47 +46,47 @@ namespace MinyToDo.Api.Controllers
                 var result = await _userTaskService.GetAllByCategoryId(userCategoryId);
                 return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
             }
+
             return Forbid();
         }
         #endregion
 
-        #region user: create - update - delete
-        [HttpPost("User")]
-        public async Task<IActionResult> CreateUserTask([FromBody] UserTaskInput value)
+        #region create - update - delete
+        [HttpPost]
+        public async Task<IActionResult> CreateUserTask([FromBody] UserTaskRequest value)
         {
             if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
-                var newUserTask = _mapper.Map<UserTask>(value);
-                newUserTask.CreatedAt = DateTime.Now;
-                var result = await _userTaskService.InsertAsync(newUserTask);
+                var result = await _userTaskService.InsertAsync(value);
 
                 return result != null
                 ? Created("", new { result })
                 : BadRequest(new { error = "Sorry, the task could not add" });
             }
+
             return Forbid();
         }
 
-        [HttpPut("User/{userTaskId}")]
-        public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskInput value)
+        [HttpPut("{userTaskId}")]
+        public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskRequest newValues)
         {
             var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
             if (toBeUpdatedTask == null) return NoContent();
-            
-            var isSelectedCategorySame = toBeUpdatedTask.UserCategoryId == value.UserCategoryId.Value;
-            if (isSelectedCategorySame || await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
+
+            var isSelectedCategorySameToCurrent = toBeUpdatedTask.UserCategoryId == newValues.UserCategoryId.Value;
+            if (isSelectedCategorySameToCurrent || await selectedCategoryRelatedToUser(newValues.UserCategoryId.Value))
             {
-                _mapper.Map(value, toBeUpdatedTask);
-                var result = await _userTaskService.UpdateAsync(toBeUpdatedTask);
+                var result = await _userTaskService.UpdateAsync(toBeUpdatedTask, newValues);
 
                 return result != null
                 ? Ok(new { result })
                 : BadRequest(new { error = "Sorry, the task could not update" });
             }
+
             return Forbid();
         }
 
-        [HttpDelete("User/{userTaskId}")]
+        [HttpDelete("{userTaskId}")]
         public async Task<IActionResult> DeleteUserTask([FromRoute] Guid userTaskId)
         {
             var toBeDeletedTask = await _userTaskService.GetById(userTaskId);
@@ -101,6 +99,7 @@ namespace MinyToDo.Api.Controllers
                 ? Ok()
                 : BadRequest(new { error = "Sorry, the task could not delete" });
             }
+
             return Forbid();
         }
         #endregion

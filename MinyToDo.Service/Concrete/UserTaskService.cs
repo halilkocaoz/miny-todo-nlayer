@@ -1,28 +1,37 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
+using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Entity.Models;
 
 namespace MinyToDo.Service.Concrete
 {
     public class UserTaskService : IUserTaskService
     {
+        private IMapper _mapper;
         private IUserTaskRepository _userTaskRepository;
 
-        public UserTaskService(IUserTaskRepository userTaskRepository)
+        public UserTaskService(IUserTaskRepository userTaskRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _userTaskRepository = userTaskRepository;
         }
 
-        public async Task<UserTask> InsertAsync(UserTask userTask)
+        public async Task<UserTask> InsertAsync(UserTaskRequest newUserTaskRequest)
         {
-            return await _userTaskRepository.InsertAsync(userTask);
+            var newUserTask = _mapper.Map<UserTask>(newUserTaskRequest);
+
+            newUserTask.CreatedAt = DateTime.Now;
+            newUserTask.Completed = false;
+            return await _userTaskRepository.InsertAsync(newUserTask);
         }
 
-        public async Task<UserTask> UpdateAsync(UserTask userTask)
+        public async Task<UserTask> UpdateAsync(UserTask userTask, UserTaskRequest newValues)
         {
+            userTask = _mapper.Map<UserTask>(userTask);
             return await _userTaskRepository.UpdateAsync(userTask);
         }
 
