@@ -25,7 +25,7 @@ namespace MinyToDo.Api.Controllers
             public string New { get; set; }
         }
 
-        [HttpPut("password")]
+        [HttpPut("Password")]
         public async Task<IActionResult> PasswordChange([FromBody] Password value)
         {
             var authorizedUser = await _userManager.FindByIdAsync(User.GetUserId().ToString());
