@@ -1,15 +1,16 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Extensions;
+using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Entity.Models;
 
-namespace MinyToDo.Api.Controllers
+namespace MinyToDo.Api.Controllers.Me
 {
+    [Route("Api/Me/[controller]")]
     [Authorize]
     public class CategoryController : ApiController
     {
@@ -20,9 +21,9 @@ namespace MinyToDo.Api.Controllers
         }
         private bool categoryRelatedToAuthorizedUser(UserCategory userCategory)
                 => userCategory?.ApplicationUserId == User.GetUserId();
-        
-        #region user: read
-        [HttpGet("User")]
+
+        #region read
+        [HttpGet]
         public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks = false)
         {
             var result = withTasks
@@ -33,35 +34,28 @@ namespace MinyToDo.Api.Controllers
         }
         #endregion
 
-        #region user: create - update - delete
-        public class CategoryInput
-        {
-            [Required]
-            [MinLength(3)]
-            [MaxLength(30)]
-            public string Name { get; set; }
-        }
+        #region create - update - delete
 
-        [HttpPost("User")]
-        public async Task<IActionResult> CreateUserCategory([FromBody] CategoryInput value)
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUserCategory([FromBody] UserCategoryRequest value)
         {
-            var newUserCategory = new UserCategory(User.GetUserId(), value.Name);
-            var result = await _userCategoryService.InsertAsync(newUserCategory);
+            var result = await _userCategoryService.InsertAsync(User.GetUserId(), value);
 
             return result != null
             ? Created("", new { response = result })
             : BadRequest(new { error = "Sorry, the category could not add" });
         }
 
-        [HttpPut("User/{userCategoryId}")]
-        public async Task<IActionResult> UpdateUserCategory(Guid userCategoryId, CategoryInput value)
+        [HttpPut("{userCategoryId}")]
+        public async Task<IActionResult> UpdateUserCategory(Guid userCategoryId, UserCategoryRequest newValues)
         {
             var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeUpdatedCategory == null) NoContent();
+
             if (categoryRelatedToAuthorizedUser(toBeUpdatedCategory))
             {
-                toBeUpdatedCategory.Name = value.Name;
-                var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory);
+                var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory, newValues);
 
                 return result != null
                 ? Ok(new { response = result })
@@ -71,7 +65,7 @@ namespace MinyToDo.Api.Controllers
             return Forbid();
         }
 
-        [HttpDelete("User/{userCategoryId}")]
+        [HttpDelete("{userCategoryId}")]
         public async Task<IActionResult> DeleteUserCategory(Guid userCategoryId)
         {
             var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
