@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Services.Abstract;
@@ -18,7 +19,7 @@ namespace MinyToDo.Api.Extensions
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddIdentities(this IServiceCollection services, IConfiguration configuration)
-        {   
+        {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -48,12 +49,33 @@ namespace MinyToDo.Api.Extensions
         public static IServiceCollection AddDepencies(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IJwtTokenService, JwtTokenService>();
-            services.AddScoped<IUserCategoryService, UserCategoryService>();
-            services.AddScoped<IUserTaskService, UserTaskService>();
+            services.AddTransient<IUserCategoryService, UserCategoryService>();
+            services.AddTransient<IUserTaskService, UserTaskService>();
 
-            services.AddScoped<IUserCategoryRepository, UserCategoryRepository>();
-            services.AddScoped<IUserTaskRepository, UserTaskRepository>();
+            services.AddTransient<IUserCategoryRepository, UserCategoryRepository>();
+            services.AddTransient<IUserTaskRepository, UserTaskRepository>();
 
+            return services;
+        }
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement { { securityScheme, new string[] { } } });
+            });
             return services;
         }
     }

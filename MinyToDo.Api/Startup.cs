@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using MinyToDo.Api.Extensions;
 using MinyToDo.Api.Helper;
 using MinyToDo.Data;
@@ -24,15 +23,21 @@ namespace MinyToDo.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyOrigin();
+                });
+            });
             services.AddDepencies(Configuration);
             services.AddIdentities(Configuration);
+            services.AddSwagger(Configuration);
             services.AddAutoMapper(typeof(AutoMappers).Assembly);
-            
+
             services.AddControllers().AddNewtonsoftJson();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MinyToDo.Api", Version = "v1" });
-            });
+
             services.AddDbContext<MinyToDoContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("dev"));
@@ -49,6 +54,7 @@ namespace MinyToDo.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MinyToDo.Api v1"));
             }
 
+            app.UseCors();
             app.UseHttpsRedirection();
 
             app.UseRouting();
