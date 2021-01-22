@@ -10,8 +10,7 @@ namespace MinyToDo.Entity.DTO.Request
 
         }
 
-        [Required]
-        public Guid? UserCategoryId { get; set; }
+        public Guid? UserCategoryId { get; set; } = null;
         [Required]
         [MaxLength(200)]
         public string Content { get; set; }

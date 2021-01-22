@@ -10,6 +10,6 @@ namespace MinyToDo.Entity.DTO.Response
         {
             
         }
-        public ICollection<UserTask> Tasks { get; set; }
+        public ICollection<UserTaskResponse> Tasks { get; set; }
     }
 }

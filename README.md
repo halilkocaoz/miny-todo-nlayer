@@ -1,6 +1,6 @@
 ## Miny ToDo
 My mini todo.
-This repository is for learning API, Multi-layer and any many more.
+This repository is for learning API, Multi-layer and many more.
 
 ## Stack
 * [ASP.NET CORE 5](https://dotnet.microsoft.com/apps/aspnet "ASP.NET CORE 5")
