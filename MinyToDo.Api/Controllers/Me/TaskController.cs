@@ -55,6 +55,9 @@ namespace MinyToDo.Api.Controllers.Me
         [HttpPost]
         public async Task<IActionResult> CreateUserTask([FromBody] UserTaskRequest value)
         {
+            if (value.UserCategoryId.HasValue is false) return BadRequest("You need to pass UserCategoryId to add a new Task."); 
+            //todo: find a another way (i  write it here because I removed the Required attribute for pass a empty usercategoryid when change a task.)
+
             if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 var result = await _userTaskService.InsertAsync(value);
@@ -73,8 +76,10 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
             if (toBeUpdatedTask == null) return NoContent();
 
-            var isSelectedCategorySameToCurrent = toBeUpdatedTask.UserCategoryId == newValues.UserCategoryId.Value;
-            if (isSelectedCategorySameToCurrent || await selectedCategoryRelatedToUser(newValues.UserCategoryId.Value))
+            var noNeedToCheckRelate = newValues.UserCategoryId.HasValue == false 
+            || toBeUpdatedTask.UserCategoryId == newValues.UserCategoryId.Value;
+
+            if (noNeedToCheckRelate || await selectedCategoryRelatedToUser(newValues.UserCategoryId.Value))
             {
                 var result = await _userTaskService.UpdateAsync(toBeUpdatedTask, newValues);
 

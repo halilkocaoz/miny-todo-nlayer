@@ -24,16 +24,13 @@ namespace MinyToDo.Service.Concrete
         public async Task<UserTaskResponse> InsertAsync(UserTaskRequest newUserTaskRequest)
         {
             var newUserTask = _mapper.Map<UserTask>(newUserTaskRequest);
-
             newUserTask.CreatedAt = DateTime.Now;
-            newUserTask.Completed = false;
             return _mapper.Map<UserTaskResponse>(await _userTaskRepository.InsertAsync(newUserTask));
         }
 
         public async Task<UserTaskResponse> UpdateAsync(UserTask userTask, UserTaskRequest newValues)
         {
-            userTask = _mapper.Map<UserTask>(userTask);
-
+            _mapper.Map(newValues, userTask);
             return _mapper.Map<UserTaskResponse>(await _userTaskRepository.UpdateAsync(userTask));
         }
 
