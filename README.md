@@ -9,4 +9,4 @@ This repository is for learning API, Multi-layer and any many more.
 * Authentication / Authorization with [Jwt](https://jwt.io/ "Jwt") Bearer and [IdentityDbContext](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.entityframeworkcore.identitydbcontext?view=aspnetcore-5.0 "IdentityDbContext")
 
 #### Swagger
-![Swagger](https://github.com/halilkocaoz/miny-todo/tree/main/readme/swagger.png "Swagger")
+![Swagger](https://github.com/halilkocaoz/miny-todo/blob/main/readme/swagger.png "Swagger")
