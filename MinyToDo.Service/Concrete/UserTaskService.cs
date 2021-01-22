@@ -5,6 +5,7 @@ using AutoMapper;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Entity.DTO.Request;
+using MinyToDo.Entity.DTO.Response;
 using MinyToDo.Entity.Models;
 
 namespace MinyToDo.Service.Concrete
@@ -20,19 +21,20 @@ namespace MinyToDo.Service.Concrete
             _userTaskRepository = userTaskRepository;
         }
 
-        public async Task<UserTask> InsertAsync(UserTaskRequest newUserTaskRequest)
+        public async Task<UserTaskResponse> InsertAsync(UserTaskRequest newUserTaskRequest)
         {
             var newUserTask = _mapper.Map<UserTask>(newUserTaskRequest);
 
             newUserTask.CreatedAt = DateTime.Now;
             newUserTask.Completed = false;
-            return await _userTaskRepository.InsertAsync(newUserTask);
+            return _mapper.Map<UserTaskResponse>(await _userTaskRepository.InsertAsync(newUserTask));
         }
 
-        public async Task<UserTask> UpdateAsync(UserTask userTask, UserTaskRequest newValues)
+        public async Task<UserTaskResponse> UpdateAsync(UserTask userTask, UserTaskRequest newValues)
         {
             userTask = _mapper.Map<UserTask>(userTask);
-            return await _userTaskRepository.UpdateAsync(userTask);
+
+            return _mapper.Map<UserTaskResponse>(await _userTaskRepository.UpdateAsync(userTask));
         }
 
         public async Task<bool> DeleteAsync(UserTask userTask)
@@ -40,9 +42,9 @@ namespace MinyToDo.Service.Concrete
             return await _userTaskRepository.DeleteAsync(userTask) > 0 ? true : false;
         }
 
-        public async Task<IEnumerable<UserTask>> GetAllByCategoryId(Guid categoryId)
+        public async Task<IEnumerable<UserTaskResponse>> GetAllByCategoryId(Guid categoryId)
         {
-            return await _userTaskRepository.GetAll(task => task.UserCategoryId == categoryId);
+            return _mapper.Map<IEnumerable<UserTaskResponse>>(await _userTaskRepository.GetAll(task => task.UserCategoryId == categoryId));
         }
 
         public async Task<UserTask> GetById(Guid userTaskId)
