@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Entity.Models.Base;
 
 namespace MinyToDo.Entity.Models
@@ -10,11 +11,11 @@ namespace MinyToDo.Entity.Models
         {
             
         }
-        public UserCategory(Guid appUserId, string categoryName)
+        public UserCategory(Guid appUserId, UserCategoryRequest userCategoryRequest)
         {
             Id = Guid.NewGuid();
             ApplicationUserId = appUserId;
-            Name = categoryName;
+            Name = userCategoryRequest.Name;
         }
 
         public Guid ApplicationUserId { get; set; }

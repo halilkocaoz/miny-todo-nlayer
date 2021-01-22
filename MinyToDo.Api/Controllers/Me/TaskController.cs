@@ -30,7 +30,7 @@ namespace MinyToDo.Api.Controllers.Me
         private async Task<bool> selectedCategoryRelatedToUser(Guid userCategoryId)
         {
             var selectedCategory = await _userCategoryService.GetById(userCategoryId);
-            return selectedCategory?.ApplicationUserId == User.GetUserId();
+            return selectedCategory?.ApplicationUserId == User.GetAuthorizedUserId();
         }
 
         private async Task<bool> selectedTaskBelongsToUser(UserTask userTask)

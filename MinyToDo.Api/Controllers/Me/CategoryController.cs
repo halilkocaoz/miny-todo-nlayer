@@ -20,15 +20,15 @@ namespace MinyToDo.Api.Controllers.Me
             _userCategoryService = userCategoryService;
         }
         private bool categoryRelatedToAuthorizedUser(UserCategory userCategory)
-                => userCategory?.ApplicationUserId == User.GetUserId();
+                => userCategory?.ApplicationUserId == User.GetAuthorizedUserId();
 
         #region read
         [HttpGet]
         public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks = false)
         {
             var result = withTasks
-            ? await _userCategoryService.GetAllWithTasksByUserId(User.GetUserId())
-            : await _userCategoryService.GetAllByUserId(User.GetUserId());
+            ? await _userCategoryService.GetAllWithTasksByUserId(User.GetAuthorizedUserId())
+            : await _userCategoryService.GetAllByUserId(User.GetAuthorizedUserId());
 
             return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
         }
@@ -40,7 +40,7 @@ namespace MinyToDo.Api.Controllers.Me
         [HttpPost]
         public async Task<IActionResult> CreateUserCategory([FromBody] UserCategoryRequest value)
         {
-            var result = await _userCategoryService.InsertAsync(User.GetUserId(), value);
+            var result = await _userCategoryService.InsertAsync(User.GetAuthorizedUserId(), value);
 
             return result != null
             ? Created("", new { response = result })

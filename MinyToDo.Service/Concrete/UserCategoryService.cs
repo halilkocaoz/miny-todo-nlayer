@@ -21,43 +21,19 @@ namespace MinyToDo.Service.Concrete
 
         public async Task<UserCategory> InsertAsync(Guid appUserId, UserCategoryRequest newCategory)
         {
-            try
-            {
-                var newEntity = new UserCategory(appUserId, newCategory.Name);
-                return await _userCategoryRepository.InsertAsync(newEntity);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, appUserId + " try to create a Category : " + ex?.Message, newCategory);
-                return null;
-            }
+            var newEntity = new UserCategory(appUserId, newCategory);
+            return await _userCategoryRepository.InsertAsync(newEntity);
         }
 
         public async Task<UserCategory> UpdateAsync(UserCategory userCategory, UserCategoryRequest newValues)
         {
-            try
-            {
-                userCategory.Name = newValues.Name;
-                return await _userCategoryRepository.UpdateAsync(userCategory);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "User try to update a Category : " + ex?.Message, userCategory);
-                return null;
-            }
+            userCategory.Name = newValues.Name;
+            return await _userCategoryRepository.UpdateAsync(userCategory);
         }
 
         public async Task<bool> DeleteAsync(UserCategory userCategory)
         {
-            try
-            {
-                return await _userCategoryRepository.DeleteAsync(userCategory) > 0 ? true : false;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "User try to delete a Category : " + ex?.Message, userCategory);
-                return false;
-            }
+            return await _userCategoryRepository.DeleteAsync(userCategory) > 0 ? true : false;
         }
 
         public async Task<IEnumerable<UserCategory>> GetAllByUserId(Guid appUserId)

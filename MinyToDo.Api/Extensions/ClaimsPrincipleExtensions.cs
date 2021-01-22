@@ -9,7 +9,7 @@ namespace MinyToDo.Api.Extensions
         {
             return user.FindFirst(ClaimTypes.Name)?.Value;
         }   
-        public static Guid GetUserId(this ClaimsPrincipal user)
+        public static Guid GetAuthorizedUserId(this ClaimsPrincipal user)
         {
             return Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
