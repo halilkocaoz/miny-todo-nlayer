@@ -12,8 +12,8 @@ namespace MinyToDo.Service.Concrete
 {
     public class UserTaskService : IUserTaskService
     {
-        private IMapper _mapper;
-        private IUserTaskRepository _userTaskRepository;
+        private readonly IMapper _mapper;
+        private readonly IUserTaskRepository _userTaskRepository;
 
         public UserTaskService(IUserTaskRepository userTaskRepository, IMapper mapper)
         {

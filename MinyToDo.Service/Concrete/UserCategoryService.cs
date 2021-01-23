@@ -13,8 +13,8 @@ namespace MinyToDo.Service.Concrete
 {
     public class UserCategoryService : IUserCategoryService
     {
-        private IUserCategoryRepository _userCategoryRepository;
-        private IMapper _mapper;
+        private readonly IUserCategoryRepository _userCategoryRepository;
+        private readonly IMapper _mapper;
 
         public UserCategoryService(IUserCategoryRepository userCategoryRepository, IMapper mapper)
         {
