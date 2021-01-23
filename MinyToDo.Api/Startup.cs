@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MinyToDo.Api.Extensions;
-using MinyToDo.Api.Helper;
+using MinyToDo.Api.Helpers;
 using MinyToDo.Data;
 
 namespace MinyToDo.Api
@@ -23,6 +23,9 @@ namespace MinyToDo.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddDepencies(Configuration);
+            services.AddIdentities(Configuration);
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -31,17 +34,13 @@ namespace MinyToDo.Api
                     builder.AllowAnyOrigin();
                 });
             });
-            services.AddDepencies(Configuration);
-            services.AddIdentities(Configuration);
-            services.AddSwagger(Configuration);
-            services.AddAutoMapper(typeof(AutoMappers).Assembly);
-
-            services.AddControllers().AddNewtonsoftJson();
-
             services.AddDbContext<MinyToDoContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("dev"));
             });
+            services.AddSwagger(Configuration);
+            services.AddAutoMapper(typeof(AutoMappers).Assembly);
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

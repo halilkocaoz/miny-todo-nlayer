@@ -55,7 +55,7 @@ namespace MinyToDo.Api.Controllers.Me
         [HttpPost]
         public async Task<IActionResult> CreateUserTask([FromBody] UserTaskRequest value)
         {
-            if (value.UserCategoryId.HasValue is false) return BadRequest("You need to pass UserCategoryId to add a new Task.");
+            if (value.UserCategoryId.HasValue is false) return BadRequest("You need to select a Category to add a new Task.");
 
             if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {

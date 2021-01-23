@@ -16,25 +16,19 @@ namespace MinyToDo.Api.Services.Concrete
     public class JwtTokenService : IJwtTokenService
     {
         private readonly SymmetricSecurityKey _key;
-        private readonly UserManager<AppUser> _userManager;
-        public JwtTokenService(IConfiguration configuration, UserManager<AppUser> userManager)
+        public JwtTokenService(IConfiguration configuration)
         {
-            _userManager = userManager;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SECRET"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]));
         }
 
         public async Task<string> CreateTokenAsync(AppUser appUser)
         {
+            await Task.Yield();
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, appUser.UserName),
             };
-
-            var roles = await _userManager.GetRolesAsync(appUser);
-
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
             var signCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(

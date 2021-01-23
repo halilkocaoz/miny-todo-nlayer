@@ -4,13 +4,13 @@ using MinyToDo.Entity.DTO.Request;
 using MinyToDo.Entity.DTO.Response;
 using MinyToDo.Entity.Models;
 
-namespace MinyToDo.Api.Helper
+namespace MinyToDo.Api.Helpers
 {
     public class AutoMappers : Profile
     {
         public AutoMappers()
         {
-            // DTO to >>> Orjinal
+            // DTO(Request) to >>> Original
             CreateMap<UserTaskRequest, UserTask>().ForMember(
             dest => dest.UserCategoryId, option =>
             {
@@ -24,7 +24,7 @@ namespace MinyToDo.Api.Helper
 
 
 
-            // Orjinal to >>> DTO
+            // Original to >>> DTO(Response)
             CreateMap<UserTask, UserTaskResponse>();
             CreateMap<UserCategory, UserCategoryResponse>();
         }
