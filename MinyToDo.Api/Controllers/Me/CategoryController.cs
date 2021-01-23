@@ -14,7 +14,7 @@ namespace MinyToDo.Api.Controllers.Me
     [Authorize]
     public class CategoryController : ApiController
     {
-        IUserCategoryService _userCategoryService;
+        private readonly IUserCategoryService _userCategoryService;
         public CategoryController(IUserCategoryService userCategoryService)
         {
             _userCategoryService = userCategoryService;
@@ -24,7 +24,7 @@ namespace MinyToDo.Api.Controllers.Me
 
         #region read
         [HttpGet]
-        public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks = false)
+        public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks)
         {
             var result = withTasks
             ? await _userCategoryService.GetAllWithTasksByUserId(User.GetAuthorizedUserId())

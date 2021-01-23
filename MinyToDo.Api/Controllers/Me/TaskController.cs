@@ -15,8 +15,8 @@ namespace MinyToDo.Api.Controllers.Me
     public class TaskController : ApiController
     {
         #region _
-        private IUserTaskService _userTaskService;
-        private IUserCategoryService _userCategoryService;
+        private readonly IUserTaskService _userTaskService;
+        private readonly IUserCategoryService _userCategoryService;
 
         public TaskController(IUserTaskService userTaskService, IUserCategoryService userCategoryService)
         {

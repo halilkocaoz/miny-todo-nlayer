@@ -12,7 +12,7 @@ namespace MinyToDo.Data
 
     public class MinyToDoContext : IdentityDbContext<AppUser, AppRole, Guid>
     {
-        public MinyToDoContext(DbContextOptions options) : base(options) { { { } } }
+        public MinyToDoContext(DbContextOptions options) : base(options) { }
 
         public virtual DbSet<AppUser> ApplicationUsers { get; set; }
         public virtual DbSet<UserCategory> UserCategories { get; set; }

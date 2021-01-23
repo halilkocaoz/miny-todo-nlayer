@@ -16,6 +16,6 @@ namespace MinyToDo.Entity.DTO.Request
         public string Content { get; set; }
         public string LongDescription { get; set; }
         public DateTime DueDate { get; set; } = DateTime.Now.AddDays(1);
-        public bool Completed { get; set; } = false;
+        public bool Completed { get; set; }
     }
 }

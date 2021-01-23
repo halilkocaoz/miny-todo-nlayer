@@ -11,10 +11,10 @@ namespace MinyToDo.Api.Controllers
 {
     public class AuthController : ApiController
     {
-        private UserManager<AppUser> _userManager;
-        private IJwtTokenService _jwtTokenService;
-        private IUserCategoryService _userCategoryService;
-        private IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUserCategoryService _userCategoryService;
+        private readonly IMapper _mapper;
         public AuthController(IMapper mapper, IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
         {
             _mapper = mapper;

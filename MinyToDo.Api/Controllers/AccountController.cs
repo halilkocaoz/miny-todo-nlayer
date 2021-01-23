@@ -11,7 +11,7 @@ namespace MinyToDo.Api.Controllers
     [Authorize]
     public class AccountController : ApiController
     {
-        private UserManager<AppUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         public AccountController(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
