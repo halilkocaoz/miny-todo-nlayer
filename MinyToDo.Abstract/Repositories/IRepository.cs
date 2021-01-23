@@ -10,7 +10,7 @@ namespace MinyToDo.Abstract.Repositories
         Task<TEntity> InsertAsync(TEntity entity);
         Task<TEntity> UpdateAsync(TEntity entity);
         Task<int> DeleteAsync(TEntity entity);
-        Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate = null);
+        Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> GetById(object id);
     }
 }

@@ -8,6 +8,6 @@ namespace MinyToDo.Abstract.Repositories
 {
     public interface IUserCategoryRepository : IRepository<UserCategory>
     {
-        Task<IEnumerable<UserCategory>> GetAllWithTasksAsync(Expression<Func<UserCategory, bool>> predicate = null);
+        Task<IEnumerable<UserCategory>> GetAllWithTasksAsync(Expression<Func<UserCategory, bool>> predicate);
     }
 }

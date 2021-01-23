@@ -15,7 +15,7 @@ namespace MinyToDo.Data.Concrete
         {
         }
 
-        public async Task<IEnumerable<UserCategory>> GetAllWithTasksAsync(Expression<Func<UserCategory, bool>> predicate = null)
+        public async Task<IEnumerable<UserCategory>> GetAllWithTasksAsync(Expression<Func<UserCategory, bool>> predicate)
         {
             return predicate != null
             ? await _context.UserCategories.Where(predicate).Include(usercategory => usercategory.Tasks).ToListAsync()

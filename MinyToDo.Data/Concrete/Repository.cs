@@ -33,7 +33,7 @@ namespace MinyToDo.Data.Concrete
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate = null)
+        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate)
         {
             return predicate != null
             ? await DbSet.Where(predicate).ToListAsync()
