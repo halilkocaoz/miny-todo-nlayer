@@ -28,15 +28,15 @@ namespace MinyToDo.Service.Concrete
             return _mapper.Map<UserCategoryResponse>(await _userCategoryRepository.InsertAsync(newEntity)); 
         }
 
-        public async Task<UserCategoryResponse> UpdateAsync(UserCategory userCategory, UserCategoryRequest newValues)
+        public async Task<UserCategoryResponse> UpdateAsync(UserCategory toBeUpdatedCategory, UserCategoryRequest newValues)
         {
-            userCategory.Name = newValues.Name;
-            return _mapper.Map<UserCategoryResponse>(await _userCategoryRepository.UpdateAsync(userCategory));
+            toBeUpdatedCategory.Name = newValues.Name;
+            return _mapper.Map<UserCategoryResponse>(await _userCategoryRepository.UpdateAsync(toBeUpdatedCategory));
         }
 
-        public async Task<bool> DeleteAsync(UserCategory userCategory)
+        public async Task<bool> DeleteAsync(UserCategory toBeDeletedCategory)
         {
-            return await _userCategoryRepository.DeleteAsync(userCategory) > 0 ? true : false;
+            return await _userCategoryRepository.DeleteAsync(toBeDeletedCategory) > 0 ? true : false;
         }
 
         public async Task<IEnumerable<UserCategoryResponse>> GetAllByUserId(Guid appUserId)

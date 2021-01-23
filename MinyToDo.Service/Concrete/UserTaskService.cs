@@ -21,22 +21,22 @@ namespace MinyToDo.Service.Concrete
             _userTaskRepository = userTaskRepository;
         }
 
-        public async Task<UserTaskResponse> InsertAsync(UserTaskRequest newUserTaskRequest)
+        public async Task<UserTaskResponse> InsertAsync(UserTaskRequest newTask)
         {
-            var newUserTask = _mapper.Map<UserTask>(newUserTaskRequest);
+            var newUserTask = _mapper.Map<UserTask>(newTask);
             newUserTask.CreatedAt = DateTime.Now;
             return _mapper.Map<UserTaskResponse>(await _userTaskRepository.InsertAsync(newUserTask));
         }
 
-        public async Task<UserTaskResponse> UpdateAsync(UserTask userTask, UserTaskRequest newValues)
+        public async Task<UserTaskResponse> UpdateAsync(UserTask toBeUpdatedCategory, UserTaskRequest newValues)
         {
-            _mapper.Map(newValues, userTask);
-            return _mapper.Map<UserTaskResponse>(await _userTaskRepository.UpdateAsync(userTask));
+            _mapper.Map(newValues, toBeUpdatedCategory);
+            return _mapper.Map<UserTaskResponse>(await _userTaskRepository.UpdateAsync(toBeUpdatedCategory));
         }
 
-        public async Task<bool> DeleteAsync(UserTask userTask)
+        public async Task<bool> DeleteAsync(UserTask toBeDeletedCategory)
         {
-            return await _userTaskRepository.DeleteAsync(userTask) > 0 ? true : false;
+            return await _userTaskRepository.DeleteAsync(toBeDeletedCategory) > 0 ? true : false;
         }
 
         public async Task<IEnumerable<UserTaskResponse>> GetAllByCategoryId(Guid categoryId)

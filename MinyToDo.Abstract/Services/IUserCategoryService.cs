@@ -10,8 +10,8 @@ namespace MinyToDo.Abstract.Services
     public interface IUserCategoryService
     {
         Task<UserCategoryResponse> InsertAsync(Guid appUserId, UserCategoryRequest newCategory);
-        Task<UserCategoryResponse> UpdateAsync(UserCategory userCategory, UserCategoryRequest newValues);
-        Task<bool> DeleteAsync(UserCategory userCategory);
+        Task<UserCategoryResponse> UpdateAsync(UserCategory toBeUpdatedCategory, UserCategoryRequest newValues);
+        Task<bool> DeleteAsync(UserCategory toBeDeletedCategory);
 
         Task<IEnumerable<UserCategoryResponse>> GetAllByUserId(Guid appUserId);
         Task<IEnumerable<UserCategoryResponse>> GetAllWithTasksByUserId(Guid appUserId);

@@ -48,7 +48,7 @@ namespace MinyToDo.Api.Controllers.Me
         }
 
         [HttpPut("{userCategoryId}")]
-        public async Task<IActionResult> UpdateUserCategory(Guid userCategoryId, UserCategoryRequest newValues)
+        public async Task<IActionResult> UpdateUserCategory([FromRoute] Guid userCategoryId, [FromBody] UserCategoryRequest newValues)
         {
             var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeUpdatedCategory == null) NoContent();
@@ -66,7 +66,7 @@ namespace MinyToDo.Api.Controllers.Me
         }
 
         [HttpDelete("{userCategoryId}")]
-        public async Task<IActionResult> DeleteUserCategory(Guid userCategoryId)
+        public async Task<IActionResult> DeleteUserCategory([FromRoute] Guid userCategoryId)
         {
             var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeDeletedCategory == null) return NoContent();
