@@ -72,9 +72,7 @@ namespace MinyToDo.Api.Controllers.Me
             if (toBeDeletedCategory == null) return NoContent();
             if (categoryRelatedToAuthorizedUser(toBeDeletedCategory))
             {
-                var result = await _userCategoryService.DeleteAsync(toBeDeletedCategory);
-
-                return result
+                return await _userCategoryService.DeleteAsync(toBeDeletedCategory)
                 ? Ok()
                 : BadRequest(new { error = "Sorry, the category could not delete" });
             }

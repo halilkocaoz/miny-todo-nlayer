@@ -62,7 +62,7 @@ namespace MinyToDo.Api.Controllers.Me
                 var result = await _userTaskService.InsertAsync(value);
 
                 return result != null
-                ? Created("", new { result })
+                ? Created("", new { response = result })
                 : BadRequest(new { error = "Sorry, the task could not add" });
             }
 
@@ -83,7 +83,7 @@ namespace MinyToDo.Api.Controllers.Me
                 var result = await _userTaskService.UpdateAsync(toBeUpdatedTask, newValues);
 
                 return result != null
-                ? Ok(new { result })
+                ? Ok(new { response = result })
                 : BadRequest(new { error = "Sorry, the task could not update" });
             }
 
@@ -98,8 +98,7 @@ namespace MinyToDo.Api.Controllers.Me
 
             if (await selectedTaskBelongsToUser(toBeDeletedTask))
             {
-                var result = await _userTaskService.DeleteAsync(toBeDeletedTask);
-                return result
+                return await _userTaskService.DeleteAsync(toBeDeletedTask)
                 ? Ok()
                 : BadRequest(new { error = "Sorry, the task could not delete" });
             }
