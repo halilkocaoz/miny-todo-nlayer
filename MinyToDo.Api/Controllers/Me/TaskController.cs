@@ -14,7 +14,6 @@ namespace MinyToDo.Api.Controllers.Me
     [Authorize]
     public class TaskController : ApiController
     {
-        #region _
         private readonly IUserTaskService _userTaskService;
         private readonly IUserCategoryService _userCategoryService;
 
@@ -23,7 +22,6 @@ namespace MinyToDo.Api.Controllers.Me
             _userCategoryService = userCategoryService;
             _userTaskService = userTaskService;
         }
-        #endregion
 
         #region  user: checks
         [NonAction]
@@ -55,8 +53,14 @@ namespace MinyToDo.Api.Controllers.Me
         [HttpPost]
         public async Task<IActionResult> CreateUserTask([FromBody] UserTaskRequest value)
         {
-            if (value.UserCategoryId.HasValue is false) return BadRequest("You need to select a Category to add a new Task.");
-
+            if (value.UserCategoryId.HasValue is false)
+                return BadRequest("You need to select a Category to add a new Task.");
+                /*
+                    ApiController attribute does validation but UserCategoryId property in UserTaskRequest not marked 
+                    as required because update metot also uses UserTaskRequest
+                    and every update metot won't need to change category.
+                */
+            
             if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 var result = await _userTaskService.InsertAsync(value);
@@ -73,7 +77,7 @@ namespace MinyToDo.Api.Controllers.Me
         public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskRequest newValues)
         {
             var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
-            if (toBeUpdatedTask == null) return NoContent();
+            if (toBeUpdatedTask == null) return NotFound("Task is not exist");
 
             var noNeedToCheckRelate = newValues.UserCategoryId.HasValue == false
             || toBeUpdatedTask.UserCategoryId == newValues.UserCategoryId.Value;
@@ -94,7 +98,7 @@ namespace MinyToDo.Api.Controllers.Me
         public async Task<IActionResult> DeleteUserTask([FromRoute] Guid userTaskId)
         {
             var toBeDeletedTask = await _userTaskService.GetById(userTaskId);
-            if (toBeDeletedTask == null) return NoContent();
+            if (toBeDeletedTask == null) return NotFound("Task is not exist");
 
             if (await selectedTaskBelongsToUser(toBeDeletedTask))
             {

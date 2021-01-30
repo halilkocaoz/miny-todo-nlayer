@@ -36,7 +36,6 @@ namespace MinyToDo.Api.Controllers.Me
 
         #region create - update - delete
 
-
         [HttpPost]
         public async Task<IActionResult> CreateUserCategory([FromBody] UserCategoryRequest value)
         {
@@ -51,7 +50,7 @@ namespace MinyToDo.Api.Controllers.Me
         public async Task<IActionResult> UpdateUserCategory([FromRoute] Guid userCategoryId, [FromBody] UserCategoryRequest newValues)
         {
             var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
-            if (toBeUpdatedCategory == null) NoContent();
+            if (toBeUpdatedCategory == null) return NotFound("Category is not exist");
 
             if (categoryRelatedToAuthorizedUser(toBeUpdatedCategory))
             {
@@ -69,7 +68,8 @@ namespace MinyToDo.Api.Controllers.Me
         public async Task<IActionResult> DeleteUserCategory([FromRoute] Guid userCategoryId)
         {
             var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
-            if (toBeDeletedCategory == null) return NoContent();
+            if (toBeDeletedCategory == null) return NotFound("Category is not exist");
+
             if (categoryRelatedToAuthorizedUser(toBeDeletedCategory))
             {
                 return await _userCategoryService.DeleteAsync(toBeDeletedCategory)
