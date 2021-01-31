@@ -25,21 +25,21 @@ namespace MinyToDo.Api.Controllers.Me
 
         #region  user: checks
         [NonAction]
-        private async Task<bool> selectedCategoryRelatedToUser(Guid userCategoryId)
+        private async Task<bool> isCategoryRelatedToUser(Guid userCategoryId)
         {
             var selectedCategory = await _userCategoryService.GetById(userCategoryId);
             return selectedCategory?.ApplicationUserId == User.GetAuthorizedUserId();
         }
         [NonAction]
-        private async Task<bool> selectedTaskBelongsToUser(UserTask userTask)
-                        => await selectedCategoryRelatedToUser(userTask.UserCategoryId);
+        private async Task<bool> isTaskBelongToUser(UserTask userTask)
+                        => await isCategoryRelatedToUser(userTask.UserCategoryId);
         #endregion
 
         #region read
         [HttpGet("{userCategoryId}")]
         public async Task<IActionResult> GetUserTasksByCategoryId([FromRoute] Guid userCategoryId)
         {
-            if (await selectedCategoryRelatedToUser(userCategoryId))
+            if (await isCategoryRelatedToUser(userCategoryId))
             {
                 var result = await _userTaskService.GetAllByCategoryId(userCategoryId);
                 return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
@@ -55,40 +55,40 @@ namespace MinyToDo.Api.Controllers.Me
         {
             if (value.UserCategoryId.HasValue is false)
                 return BadRequest("You need to select a Category to add a new Task.");
-                /*
-                    ApiController attribute does validation but UserCategoryId property in UserTaskRequest not marked 
-                    as required because update metot also uses UserTaskRequest
-                    and every update metot won't need to change category.
-                */
-            
-            if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
+            /*
+                ApiController attribute does validation but UserCategoryId property in UserTaskRequest not marked 
+                as required because update metot also uses UserTaskRequest
+                and every update metot won't need to change category.
+            */
+
+            if (await isCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 var result = await _userTaskService.InsertAsync(value);
 
                 return result != null
                 ? Created("", new { response = result })
-                : BadRequest(new { error = "Sorry, the task could not add" });
+                : BadRequest(new { error = "Sorry, the task could not be added" });
             }
 
             return Forbid();
         }
 
         [HttpPut("{userTaskId}")]
-        public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskRequest newValues)
+        public async Task<IActionResult> UpdateUserTask([FromRoute] Guid userTaskId, [FromBody] UserTaskRequest newValue)
         {
             var toBeUpdatedTask = await _userTaskService.GetById(userTaskId);
             if (toBeUpdatedTask == null) return NotFound("Task is not exist");
 
-            var noNeedToCheckRelate = newValues.UserCategoryId.HasValue == false
-            || toBeUpdatedTask.UserCategoryId == newValues.UserCategoryId.Value;
+            var noNeedToCheckRelate = newValue.UserCategoryId.HasValue == false
+            || toBeUpdatedTask.UserCategoryId == newValue.UserCategoryId.Value;
 
-            if (noNeedToCheckRelate || await selectedCategoryRelatedToUser(newValues.UserCategoryId.Value))
+            if (await isTaskBelongToUser(toBeUpdatedTask) && (noNeedToCheckRelate || await isCategoryRelatedToUser(newValue.UserCategoryId.Value)))
             {
-                var result = await _userTaskService.UpdateAsync(toBeUpdatedTask, newValues);
+                var result = await _userTaskService.UpdateAsync(toBeUpdatedTask, newValue);
 
                 return result != null
                 ? Ok(new { response = result })
-                : BadRequest(new { error = "Sorry, the task could not update" });
+                : BadRequest(new { error = "Sorry, the task could not be updated" });
             }
 
             return Forbid();
@@ -100,11 +100,11 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeDeletedTask = await _userTaskService.GetById(userTaskId);
             if (toBeDeletedTask == null) return NotFound("Task is not exist");
 
-            if (await selectedTaskBelongsToUser(toBeDeletedTask))
+            if (await isTaskBelongToUser(toBeDeletedTask))
             {
                 return await _userTaskService.DeleteAsync(toBeDeletedTask)
                 ? Ok()
-                : BadRequest(new { error = "Sorry, the task could not delete" });
+                : BadRequest(new { error = "Sorry, the task could not be deleted" });
             }
 
             return Forbid();

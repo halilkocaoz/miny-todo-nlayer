@@ -19,8 +19,6 @@ namespace MinyToDo.Api.Controllers.Me
         {
             _userCategoryService = userCategoryService;
         }
-        private bool categoryRelatedToAuthorizedUser(UserCategory userCategory)
-                => userCategory?.ApplicationUserId == User.GetAuthorizedUserId();
 
         #region read
         [HttpGet]
@@ -43,7 +41,7 @@ namespace MinyToDo.Api.Controllers.Me
 
             return result != null
             ? Created("", new { response = result })
-            : BadRequest(new { error = "Sorry, the category could not add" });
+            : BadRequest(new { error = "Sorry, the category could not be added" });
         }
 
         [HttpPut("{userCategoryId}")]
@@ -52,13 +50,13 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeUpdatedCategory == null) return NotFound("Category is not exist");
 
-            if (categoryRelatedToAuthorizedUser(toBeUpdatedCategory))
+            if (toBeUpdatedCategory.ApplicationUserId == User.GetAuthorizedUserId())
             {
                 var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory, newValues);
 
                 return result != null
                 ? Ok(new { response = result })
-                : BadRequest(new { error = "Sorry, the category could not update" });
+                : BadRequest(new { error = "Sorry, the category could not be updated" });
             }
 
             return Forbid();
@@ -70,11 +68,11 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeDeletedCategory == null) return NotFound("Category is not exist");
 
-            if (categoryRelatedToAuthorizedUser(toBeDeletedCategory))
+            if (toBeDeletedCategory.ApplicationUserId == User.GetAuthorizedUserId())
             {
                 return await _userCategoryService.DeleteAsync(toBeDeletedCategory)
                 ? Ok()
-                : BadRequest(new { error = "Sorry, the category could not delete" });
+                : BadRequest(new { error = "Sorry, the category could not be deleted" });
             }
 
             return Forbid();
