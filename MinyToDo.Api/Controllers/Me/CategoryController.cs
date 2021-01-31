@@ -50,7 +50,7 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeUpdatedCategory == null) return NotFound("Category is not exist");
 
-            if (toBeUpdatedCategory.ApplicationUserId == User.GetAuthorizedUserId())
+            if (toBeUpdatedCategory.RelatedToGivenUserId(User.GetAuthorizedUserId()))
             {
                 var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory, newValues);
 
@@ -68,7 +68,7 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
             if (toBeDeletedCategory == null) return NotFound("Category is not exist");
 
-            if (toBeDeletedCategory.ApplicationUserId == User.GetAuthorizedUserId())
+            if (toBeDeletedCategory.RelatedToGivenUserId(User.GetAuthorizedUserId()))
             {
                 return await _userCategoryService.DeleteAsync(toBeDeletedCategory)
                 ? Ok()

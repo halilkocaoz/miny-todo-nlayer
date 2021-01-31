@@ -23,23 +23,23 @@ namespace MinyToDo.Api.Controllers.Me
             _userTaskService = userTaskService;
         }
 
-        #region  user: checks
+        #region checks
         [NonAction]
-        private async Task<bool> isCategoryRelatedToUser(Guid userCategoryId)
+        private async Task<bool> selectedCategoryRelatedToUser(Guid selectedCategoryId)
         {
-            var selectedCategory = await _userCategoryService.GetById(userCategoryId);
-            return selectedCategory?.ApplicationUserId == User.GetAuthorizedUserId();
+            var selectedCategory = await _userCategoryService.GetById(selectedCategoryId);
+            return selectedCategory == null ? false : selectedCategory.RelatedToGivenUserId(User.GetAuthorizedUserId());
         }
         [NonAction]
-        private async Task<bool> isTaskBelongToUser(UserTask userTask)
-                        => await isCategoryRelatedToUser(userTask.UserCategoryId);
+        private async Task<bool> taskRelatedToUser(UserTask userTask)
+                        => await selectedCategoryRelatedToUser(userTask.UserCategoryId);
         #endregion
 
         #region read
         [HttpGet("{userCategoryId}")]
         public async Task<IActionResult> GetUserTasksByCategoryId([FromRoute] Guid userCategoryId)
         {
-            if (await isCategoryRelatedToUser(userCategoryId))
+            if (await selectedCategoryRelatedToUser(userCategoryId))
             {
                 var result = await _userTaskService.GetAllByCategoryId(userCategoryId);
                 return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
@@ -57,11 +57,11 @@ namespace MinyToDo.Api.Controllers.Me
                 return BadRequest("You need to select a Category to add a new Task.");
             /*
                 ApiController attribute does validation but UserCategoryId property in UserTaskRequest not marked 
-                as required because update metot also uses UserTaskRequest
+                as required because update metod also uses UserTaskRequest
                 and every update metot won't need to change category.
             */
 
-            if (await isCategoryRelatedToUser(value.UserCategoryId.Value))
+            if (await selectedCategoryRelatedToUser(value.UserCategoryId.Value))
             {
                 var result = await _userTaskService.InsertAsync(value);
 
@@ -82,7 +82,7 @@ namespace MinyToDo.Api.Controllers.Me
             var noNeedToCheckRelate = newValue.UserCategoryId.HasValue == false
             || toBeUpdatedTask.UserCategoryId == newValue.UserCategoryId.Value;
 
-            if (await isTaskBelongToUser(toBeUpdatedTask) && (noNeedToCheckRelate || await isCategoryRelatedToUser(newValue.UserCategoryId.Value)))
+            if (await taskRelatedToUser(toBeUpdatedTask) && (noNeedToCheckRelate || await selectedCategoryRelatedToUser(newValue.UserCategoryId.Value)))
             {
                 var result = await _userTaskService.UpdateAsync(toBeUpdatedTask, newValue);
 
@@ -100,7 +100,7 @@ namespace MinyToDo.Api.Controllers.Me
             var toBeDeletedTask = await _userTaskService.GetById(userTaskId);
             if (toBeDeletedTask == null) return NotFound("Task is not exist");
 
-            if (await isTaskBelongToUser(toBeDeletedTask))
+            if (await taskRelatedToUser(toBeDeletedTask))
             {
                 return await _userTaskService.DeleteAsync(toBeDeletedTask)
                 ? Ok()
