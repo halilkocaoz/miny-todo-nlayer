@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MinyToDo.Api.Services.Abstract;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Api.Services.Concrete
 {

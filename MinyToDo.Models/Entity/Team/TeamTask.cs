@@ -1,7 +1,7 @@
 using System;
-using MinyToDo.Entity.Models.Base;
+using MinyToDo.Models.Entity.Base;
 
-namespace MinyToDo.Entity.Models
+namespace MinyToDo.Models.Entity
 {
     public class TeamTask : TaskBase
     {

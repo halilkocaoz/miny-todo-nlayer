@@ -10,7 +10,7 @@ using MinyToDo.Api.Services.Abstract;
 using MinyToDo.Api.Services.Concrete;
 using MinyToDo.Data;
 using MinyToDo.Data.Concrete;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 using MinyToDo.Service.Concrete;
 
 namespace MinyToDo.Api.Extensions

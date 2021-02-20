@@ -1,13 +1,13 @@
 using System;
-using MinyToDo.Entity.Models.Base;
+using MinyToDo.Models.Entity.Base;
 
-namespace MinyToDo.Entity.Models
+namespace MinyToDo.Models.Entity
 {
     public class UserTask : TaskBase
     {
         public UserTask()
         {
-            
+            //do not remove this ctor, because automapper uses it.
         }
         public Guid UserCategoryId { get; set; }
     }

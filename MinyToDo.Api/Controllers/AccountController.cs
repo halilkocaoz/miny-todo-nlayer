@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Api.Extensions;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Api.Controllers
 {

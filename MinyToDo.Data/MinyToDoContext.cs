@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 using System;
 using Microsoft.AspNetCore.Identity;
 

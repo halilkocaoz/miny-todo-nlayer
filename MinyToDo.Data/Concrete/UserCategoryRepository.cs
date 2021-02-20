@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MinyToDo.Abstract.Repositories;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Data.Concrete
 {

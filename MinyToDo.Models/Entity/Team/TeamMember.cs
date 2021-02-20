@@ -1,6 +1,6 @@
 using System;
 
-namespace MinyToDo.Entity.Models
+namespace MinyToDo.Models.Entity
 {
     public class TeamMember
     {

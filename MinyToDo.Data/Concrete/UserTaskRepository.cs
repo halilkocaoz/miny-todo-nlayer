@@ -1,5 +1,5 @@
 using MinyToDo.Abstract.Repositories;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Data.Concrete
 {

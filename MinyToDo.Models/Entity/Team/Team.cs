@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MinyToDo.Entity.Models
+namespace MinyToDo.Models.Entity
 {
     public class Team
     {

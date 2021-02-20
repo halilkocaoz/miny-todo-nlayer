@@ -1,6 +1,6 @@
 using System;
 
-namespace MinyToDo.Entity.Models.Base
+namespace MinyToDo.Models.Entity.Base
 {
     public abstract class TaskBase
     {

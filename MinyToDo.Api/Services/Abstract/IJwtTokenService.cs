@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Api.Services.Abstract
 {

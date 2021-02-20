@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\MinyToDo.Entity\MinyToDo.Entity.csproj" />
+    <ProjectReference Include="..\MinyToDo.Models\MinyToDo.Models.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

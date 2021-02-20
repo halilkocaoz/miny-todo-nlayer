@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace MinyToDo.Entity.Models
+namespace MinyToDo.Models.Entity
 {
     public class AppUser : IdentityUser<Guid>
     {

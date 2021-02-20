@@ -1,5 +1,5 @@
 using System;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Api.Extensions
 {

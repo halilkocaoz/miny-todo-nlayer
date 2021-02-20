@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using MinyToDo.Entity.DTO.Request;
-using MinyToDo.Entity.Models.Base;
+using MinyToDo.Models.DTO.Request;
+using MinyToDo.Models.Entity.Base;
 
-namespace MinyToDo.Entity.Models
+namespace MinyToDo.Models.Entity
 {
     public class UserCategory : CategoryBase
-    {
+    { 
         public UserCategory()
         {
-            
+            //do not remove this ctor, because automapper uses it.
         }
         public UserCategory(Guid appUserId, UserCategoryRequest userCategoryRequest)
         {

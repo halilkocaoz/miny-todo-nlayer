@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MinyToDo.Entity.DTO.Request
+namespace MinyToDo.Models.DTO.Request
 {
     public class UserTaskRequest
     {

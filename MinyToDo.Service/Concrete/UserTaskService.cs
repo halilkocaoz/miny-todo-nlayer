@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
-using MinyToDo.Entity.DTO.Request;
-using MinyToDo.Entity.DTO.Response;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.DTO.Request;
+using MinyToDo.Models.DTO.Response;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Service.Concrete
 {

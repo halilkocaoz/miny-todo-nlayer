@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using MinyToDo.Entity.Models;
-using MinyToDo.Entity.Models.Base;
+using MinyToDo.Models.Entity.Base;
 
-namespace MinyToDo.Entity.DTO.Response
+namespace MinyToDo.Models.DTO.Response
 {
     public class UserCategoryResponse : CategoryBase
     {

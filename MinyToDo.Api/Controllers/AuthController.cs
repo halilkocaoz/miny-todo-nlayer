@@ -3,9 +3,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
-using MinyToDo.Entity.DTO.Request;
+using MinyToDo.Models.DTO.Request;
 using MinyToDo.Api.Services.Abstract;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Api.Controllers
 {

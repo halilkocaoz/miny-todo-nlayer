@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Api.Extensions;
-using MinyToDo.Entity.DTO.Request;
-using MinyToDo.Entity.Models;
+using MinyToDo.Models.DTO.Request;
+using MinyToDo.Models.Entity;
 
 namespace MinyToDo.Api.Controllers.Me
 {
