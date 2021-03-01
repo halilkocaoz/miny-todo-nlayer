@@ -1,4 +1,5 @@
 using System;
+using MinyToDo.Models.Enums;
 
 namespace MinyToDo.Models.Entity.Base
 {
@@ -10,6 +11,6 @@ namespace MinyToDo.Models.Entity.Base
         public DateTime CreatedAt { get; set; }
         public DateTime DueDate { get; set; }
         public bool Completed { get; set; }
-        // public short Priority { get; set; } // todo: refactor to enum
+        public PriorityType Priority { get; set; }
     }
 }

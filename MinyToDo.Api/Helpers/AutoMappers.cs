@@ -10,7 +10,8 @@ namespace MinyToDo.Api.Helpers
     {
         public AutoMappers()
         {
-            // DTO(Request) to >>> Original
+            #region DTO(Request) to >>> Original
+            // 
             CreateMap<UserTaskRequest, UserTask>().ForMember(
             dest => dest.UserCategoryId, option =>
             {
@@ -21,12 +22,12 @@ namespace MinyToDo.Api.Helpers
             });
 
             CreateMap<SignUpRequest, AppUser>();
+            #endregion
 
-
-
-            // Original to >>> DTO(Response)
+            #region Original to >>> DTO(Response)
             CreateMap<UserTask, UserTaskResponse>();
             CreateMap<UserCategory, UserCategoryResponse>();
+            #endregion
         }
     }
 }
