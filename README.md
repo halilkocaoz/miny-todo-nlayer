@@ -5,7 +5,7 @@ My mini todo.
 This repository is for learning API, Multi-layer and many more.
 
 ## Techs
-* [ASP.NET Core 5](https://dotnet.microsoft.com/apps/aspnet "ASP.NET Core 5")
+* [ASP.NET 5](https://dotnet.microsoft.com/apps/aspnet "ASP.NET 5")
 * [PostgreSQL](https://www.postgresql.org/ "PostgreSQL")
 * [Entity Framework Core](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore "Entity Framework Core")
 * Authentication / Authorization with [Jwt](https://jwt.io/ "Jwt") Bearer and [IdentityDbContext](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.entityframeworkcore.identitydbcontext?view=aspnetcore-5.0 "IdentityDbContext")
