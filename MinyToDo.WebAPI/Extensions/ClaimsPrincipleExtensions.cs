@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 
-namespace MinyToDo.Api.Extensions
+namespace MinyToDo.WebAPI.Extensions
 {
     public static class ClaimsPrincipleExtensions
     {

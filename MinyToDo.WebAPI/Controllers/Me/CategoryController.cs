@@ -4,15 +4,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
-using MinyToDo.Api.Extensions;
+using MinyToDo.WebAPI.Extensions;
 using MinyToDo.Models.DTO.Request;
-using MinyToDo.Models.Entity;
 
-namespace MinyToDo.Api.Controllers.Me
+namespace MinyToDo.WebAPI.Controllers.Me
 {
     [Route("Api/Me/[controller]")]
     [Authorize]
-    public class CategoryController : ApiController
+    public class CategoryController : ControllerBase
     {
         private readonly IUserCategoryService _userCategoryService;
         public CategoryController(IUserCategoryService userCategoryService)

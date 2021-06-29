@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Abstract.Services;
 using MinyToDo.Models.DTO.Request;
-using MinyToDo.Api.Services.Abstract;
+using MinyToDo.WebAPI.Services.Abstract;
 using MinyToDo.Models.Entity;
 
-namespace MinyToDo.Api.Controllers
+namespace MinyToDo.WebAPI.Controllers
 {
-    public class AuthController : ApiController
+    [Route("Api/[controller]")]
+    public class AuthController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IJwtTokenService _jwtTokenService;
@@ -33,7 +34,7 @@ namespace MinyToDo.Api.Controllers
             var result = await _userManager.CreateAsync(newAppUser, value.Password);
             if (result.Succeeded)
             {
-                #pragma warning disable 4014
+                #pragma warning disable 4014 // creating default UserCategory for new signing up user.
                 _userCategoryService.InsertAsync(newAppUser.Id, new UserCategoryRequest { Name = "General" });
                 #pragma warning disable 4014
 

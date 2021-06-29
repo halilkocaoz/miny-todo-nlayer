@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using MinyToDo.Models.Entity;
 
-namespace MinyToDo.Api.Services.Abstract
+namespace MinyToDo.WebAPI.Services.Abstract
 {
     public interface IJwtTokenService
     {

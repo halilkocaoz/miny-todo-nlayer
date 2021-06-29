@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MinyToDo.Api.Extensions;
-using MinyToDo.Api.Helpers;
+using MinyToDo.WebAPI.Extensions;
+using MinyToDo.WebAPI.Helpers;
 using MinyToDo.Data;
 
-namespace MinyToDo.Api
+namespace MinyToDo.WebAPI
 {
     public class Startup
     {
@@ -50,7 +50,7 @@ namespace MinyToDo.Api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MinyToDo.Api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MinyToDo.WebAPI v1"));
             }
 
             app.UseCors();

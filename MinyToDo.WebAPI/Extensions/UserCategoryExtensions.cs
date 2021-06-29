@@ -1,7 +1,7 @@
 using System;
 using MinyToDo.Models.Entity;
 
-namespace MinyToDo.Api.Extensions
+namespace MinyToDo.WebAPI.Extensions
 {
     public static class UserCategoryExtensions
     {

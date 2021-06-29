@@ -4,7 +4,7 @@ using MinyToDo.Models.DTO.Request;
 using MinyToDo.Models.DTO.Response;
 using MinyToDo.Models.Entity;
 
-namespace MinyToDo.Api.Helpers
+namespace MinyToDo.WebAPI.Helpers
 {
     public class AutoMappers : Profile
     {

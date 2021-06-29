@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MinyToDo.Api.Services.Abstract;
+using MinyToDo.WebAPI.Services.Abstract;
 using MinyToDo.Models.Entity;
 
-namespace MinyToDo.Api.Services.Concrete
+namespace MinyToDo.WebAPI.Services.Concrete
 {
     public class JwtTokenService : IJwtTokenService
     {

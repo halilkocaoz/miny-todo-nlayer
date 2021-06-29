@@ -6,14 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
-using MinyToDo.Api.Services.Abstract;
-using MinyToDo.Api.Services.Concrete;
+using MinyToDo.WebAPI.Services.Abstract;
+using MinyToDo.WebAPI.Services.Concrete;
 using MinyToDo.Data;
 using MinyToDo.Data.Concrete;
 using MinyToDo.Models.Entity;
 using MinyToDo.Service.Concrete;
 
-namespace MinyToDo.Api.Extensions
+namespace MinyToDo.WebAPI.Extensions
 {
     public static class ServiceCollectionExtensions
     {
