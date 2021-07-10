@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MinyToDo.WebAPI.Services.Abstract;
@@ -21,9 +18,8 @@ namespace MinyToDo.WebAPI.Services.Concrete
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]));
         }
 
-        public async Task<string> CreateTokenAsync(AppUser appUser)
+        public string CreateToken(AppUser appUser)
         {
-            await Task.Yield();
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),

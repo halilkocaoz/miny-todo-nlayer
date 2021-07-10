@@ -5,6 +5,6 @@ namespace MinyToDo.WebAPI.Services.Abstract
 {
     public interface IJwtTokenService
     {
-         Task<string> CreateTokenAsync(AppUser appUser);
+         string CreateToken(AppUser appUser);
     }
 }

@@ -27,7 +27,7 @@ namespace MinyToDo.WebAPI.Controllers.Me
             ? await _userCategoryService.GetAllWithTasksByUserId(User.GetAuthorizedUserId())
             : await _userCategoryService.GetAllByUserId(User.GetAuthorizedUserId());
 
-            return result?.ToList().Count > 0 ? Ok(new { response = result }) : NoContent();
+            return result == null || !result.Any() ? NoContent() : Ok(new { response = result });
         }
         #endregion
 

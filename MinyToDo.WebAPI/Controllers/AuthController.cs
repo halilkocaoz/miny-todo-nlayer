@@ -38,7 +38,7 @@ namespace MinyToDo.WebAPI.Controllers
                 _userCategoryService.InsertAsync(newAppUser.Id, new UserCategoryRequest { Name = "General" });
                 #pragma warning disable 4014
 
-                var token = await _jwtTokenService.CreateTokenAsync(newAppUser);
+                var token = _jwtTokenService.CreateToken(newAppUser);
                 return Ok(new { token });
             }
             return BadRequest(result.Errors);
@@ -58,7 +58,7 @@ namespace MinyToDo.WebAPI.Controllers
             var isPasswordRelatedToFoundUser = appUser != null && await _userManager.CheckPasswordAsync(appUser, value.Password);
             if (isPasswordRelatedToFoundUser)
             {
-                var token = await _jwtTokenService.CreateTokenAsync(appUser);
+                var token = _jwtTokenService.CreateToken(appUser);
                 return Ok(new { token });
             }
             return Unauthorized();
