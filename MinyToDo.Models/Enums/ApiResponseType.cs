@@ -5,6 +5,8 @@ namespace MinyToDo.Models.Enums
         Created = 1,
         NoContent,
         Ok,
-        NotFound
+        NotFound,
+        Unauthorized,
+        Forbidden,
     }
 }
