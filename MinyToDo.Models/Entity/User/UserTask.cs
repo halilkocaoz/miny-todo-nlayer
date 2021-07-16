@@ -9,6 +9,8 @@ namespace MinyToDo.Models.Entity
         {
             //do not remove this ctor, because automapper uses it.
         }
+        
         public Guid UserCategoryId { get; set; }
+        public Guid ApplicationUserId { get; set; }
     }
 }

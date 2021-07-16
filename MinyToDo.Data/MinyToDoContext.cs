@@ -41,6 +41,8 @@ namespace MinyToDo.Data
             //
 
             modelBuilder.Entity<UserTask>().HasKey(p => p.Id);
+            modelBuilder.Entity<UserTask>().Property(p=>p.ApplicationUserId).IsRequired(true);
+
 
             modelBuilder.Entity<UserTask>().HasOne<UserCategory>()
                 .WithMany(userCategory => userCategory.Tasks)
