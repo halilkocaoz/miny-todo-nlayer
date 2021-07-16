@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MinyToDo.Abstract.Repositories;
 using MinyToDo.Abstract.Services;
+using MinyToDo.Models;
 using MinyToDo.Models.DTO.Request;
 using MinyToDo.Models.DTO.Response;
 using MinyToDo.Models.Entity;
@@ -13,41 +14,97 @@ namespace MinyToDo.Service.Concrete
     public class UserTaskService : IUserTaskService
     {
         private readonly IMapper _mapper;
-        private readonly IUserTaskRepository _userTaskRepository;
+        private readonly IUserTaskRepository taskRepository;
+        private readonly IUserCategoryRepository categoryRepository;
 
-        public UserTaskService(IUserTaskRepository userTaskRepository, IMapper mapper)
+        public UserTaskService(IMapper mapper, IUserTaskRepository userTaskRepository, IUserCategoryRepository userCategoryRepository)
         {
             _mapper = mapper;
-            _userTaskRepository = userTaskRepository;
+            taskRepository = userTaskRepository;
+            categoryRepository = userCategoryRepository;
         }
 
-        public async Task<UserTaskResponse> InsertAsync(UserTaskRequest newTask)
+        public async Task<ApiResponse> InsertAsync(Guid appUserId, UserTaskRequest userTaskRequest)
         {
-            var newUserTask = _mapper.Map<UserTask>(newTask);
-            newUserTask.CreatedAt = DateTime.Now;
-            return _mapper.Map<UserTaskResponse>(await _userTaskRepository.InsertAsync(newUserTask));
+            if (!userTaskRequest.UserCategoryId.HasValue)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.BadRequest, "CATEGORY.CANTBENULL");
+            }
+
+            var toBeRelatedCategory = await categoryRepository.GetById(userTaskRequest.UserCategoryId);
+            if (toBeRelatedCategory == null)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "CATEGORY.NOTFOUND");
+            }
+            if (toBeRelatedCategory.ApplicationUserId != appUserId)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
+            }
+
+            var newEntity = _mapper.Map<UserTask>(userTaskRequest);
+
+            newEntity.ApplicationUserId = appUserId;
+            newEntity.CreatedAt = DateTime.Now;
+            await taskRepository.InsertAsync(newEntity);
+
+            return new ApiResponse(Models.Enums.ApiResponseType.Created);
         }
 
-        public async Task<UserTaskResponse> UpdateAsync(UserTask toBeUpdatedCategory, UserTaskRequest newValues)
+        public async Task<ApiResponse> UpdateAsync(Guid appUserId, Guid toBeUpdatedTaskId, UserTaskRequest userTaskRequest)
         {
-            _mapper.Map(newValues, toBeUpdatedCategory);
-            return _mapper.Map<UserTaskResponse>(await _userTaskRepository.UpdateAsync(toBeUpdatedCategory));
+            var wantToChangeRelatedCategory = userTaskRequest.UserCategoryId.HasValue;
+            if (wantToChangeRelatedCategory)
+            {
+                var selectedCategoryToChange = await categoryRepository.GetById(userTaskRequest.UserCategoryId);
+                if (selectedCategoryToChange == null)
+                {
+                    return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "CATEGORY.NOTFOUND");
+                }
+                if (selectedCategoryToChange.ApplicationUserId != appUserId)
+                {
+                    return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
+                }
+            }
+
+            var toBeUpdatedTask = await taskRepository.GetById(toBeUpdatedTaskId);
+            if (toBeUpdatedTask == null)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "TASK.NOTFOUND");
+            }
+
+            if (toBeUpdatedTask.ApplicationUserId != appUserId)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
+            }
+
+            _mapper.Map(userTaskRequest, toBeUpdatedTask);
+            await taskRepository.UpdateAsync(toBeUpdatedTask);
+
+            return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
-        public async Task<bool> DeleteAsync(UserTask toBeDeletedCategory)
+        public async Task<ApiResponse> DeleteAsync(Guid appUserId, Guid toBeDeletedTaskId)
         {
-            return await _userTaskRepository.DeleteAsync(toBeDeletedCategory) > 0 ? true : false;
+            var toBeDeletedTask = await taskRepository.GetById(toBeDeletedTaskId);
+            if (toBeDeletedTask == null)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "TASK.NOTFOUND");
+            }
+            if (toBeDeletedTask.ApplicationUserId != appUserId)
+            {
+                return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
+            }
+
+            await taskRepository.DeleteAsync(toBeDeletedTask);
+            return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
-        public async Task<IEnumerable<UserTaskResponse>> GetAllByCategoryId(Guid categoryId)
+        public async Task<ApiResponse> GetAllByCategoryIdAsync(Guid appUserId, Guid userCategoryId)
         {
-            return _mapper.Map<IEnumerable<UserTaskResponse>>(await _userTaskRepository.GetAll(task => task.UserCategoryId == categoryId));
-        }
+            var userTasks = _mapper.Map<IEnumerable<UserTaskResponse>>(
+                await taskRepository.GetAll(x => x.ApplicationUserId == appUserId && x.UserCategoryId == userCategoryId));
 
-        public async Task<UserTask> GetById(Guid userTaskId)
-        {
-            return await _userTaskRepository.GetById(userTaskId);
-
+            return new ApiResponse(Models.Enums.ApiResponseType.Ok, userTasks);
         }
     }
 }
