@@ -18,7 +18,7 @@ namespace MinyToDo.Models.DTO.Request
         public string LongDescription { get; set; }
         public DateTime DueDate { get; set; } = DateTime.Now.AddDays(1);
         public bool Completed { get; set; }
-        [Range(0, 3)]
-        public PriorityType Priority { get; set; } = PriorityType.VeryLow;
+        [Range((double)TaskPriority.VeryLow, (double)TaskPriority.High)]
+        public TaskPriority Priority { get; set; } = TaskPriority.VeryLow;
     }
 }

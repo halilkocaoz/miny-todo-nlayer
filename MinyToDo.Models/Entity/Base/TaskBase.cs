@@ -11,6 +11,6 @@ namespace MinyToDo.Models.Entity.Base
         public DateTime CreatedAt { get; set; }
         public DateTime DueDate { get; set; }
         public bool Completed { get; set; }
-        public PriorityType Priority { get; set; }
+        public TaskPriority Priority { get; set; }
     }
 }
