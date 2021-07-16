@@ -43,7 +43,7 @@ namespace MinyToDo.Service.Concrete
             }
 
             toBeUpdatedCategory.Name = userCategoryRequest.Name;
-            var updatedEntity = await categoryRepository.UpdateAsync(toBeUpdatedCategory);
+            await categoryRepository.UpdateAsync(toBeUpdatedCategory);
 
             return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
@@ -65,7 +65,7 @@ namespace MinyToDo.Service.Concrete
             return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
-        public async Task<ApiResponse> GetAllWithTasksByUserIdAnd(Guid appUserId, bool withTasks)
+        public async Task<ApiResponse> GetAllWithTasksByUserId(Guid appUserId, bool withTasks)
         {
             IEnumerable<UserCategoryResponse> data = null;
 

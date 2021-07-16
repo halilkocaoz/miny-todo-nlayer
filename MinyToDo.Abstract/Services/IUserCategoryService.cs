@@ -10,6 +10,6 @@ namespace MinyToDo.Abstract.Services
         Task<ApiResponse> InsertAsync(Guid appUserId, UserCategoryRequest categoryRequest);
         Task<ApiResponse> UpdateAsync(Guid appUserId, Guid toBeUpdatedCategoryId, UserCategoryRequest categoryRequest);
         Task<ApiResponse> DeleteAsync(Guid appUserId, Guid toBeDeletedCategoryId);
-        Task<ApiResponse> GetAllWithTasksByUserIdAnd(Guid appUserId, bool withTasks);
+        Task<ApiResponse> GetAllWithTasksByUserId(Guid appUserId, bool withTasks);
     }
 }

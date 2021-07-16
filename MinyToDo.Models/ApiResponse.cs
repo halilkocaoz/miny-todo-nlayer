@@ -21,8 +21,8 @@ namespace MinyToDo.Models
             Type = _type;
         }
 
-        public object Data { get; set; } = null;
-        public string Message { get; set; } = null;
+        public object Data { get; set; }
+        public string Message { get; set; }
         public ApiResponseType Type { get; set; }
     }
 }

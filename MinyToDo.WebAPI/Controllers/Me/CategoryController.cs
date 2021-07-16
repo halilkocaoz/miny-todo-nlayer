@@ -21,12 +21,12 @@ namespace MinyToDo.WebAPI.Controllers.Me
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            return ApiReturn(await _userCategoryService.GetAllWithTasksByUserIdAnd(User.GetAuthorizedUserId(), false));
+            return ApiReturn(await _userCategoryService.GetAllWithTasksByUserId(User.GetAuthorizedUserId(), false));
         }
         [HttpGet("tasks")]
         public async Task<IActionResult> GetAllCategoriesWithTasks()
         {
-            return ApiReturn(await _userCategoryService.GetAllWithTasksByUserIdAnd(User.GetAuthorizedUserId(), true));
+            return ApiReturn(await _userCategoryService.GetAllWithTasksByUserId(User.GetAuthorizedUserId(), true));
         }
         #endregion
 
