@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +8,8 @@ using MinyToDo.Models.DTO.Request;
 
 namespace MinyToDo.WebAPI.Controllers.Me
 {
-    [Route("Api/Me/[controller]")]
-    [Authorize]
-    public class CategoryController : ControllerBase
+    [Authorize, ApiController, Route("me/categories")]
+    public class CategoryController : BaseController
     {
         private readonly IUserCategoryService _userCategoryService;
         public CategoryController(IUserCategoryService userCategoryService)
@@ -21,60 +19,34 @@ namespace MinyToDo.WebAPI.Controllers.Me
 
         #region read
         [HttpGet]
-        public async Task<IActionResult> GetAllCategoriesForAuthorizedUser([FromQuery] bool withTasks)
+        public async Task<IActionResult> GetAllCategories()
         {
-            var result = withTasks
-            ? await _userCategoryService.GetAllWithTasksByUserId(User.GetAuthorizedUserId())
-            : await _userCategoryService.GetAllByUserId(User.GetAuthorizedUserId());
-
-            return result == null || !result.Any() ? NoContent() : Ok(new { response = result });
+            return ApiReturn(await _userCategoryService.GetAllWithTasksByUserIdAnd(User.GetAuthorizedUserId(), false));
+        }
+        [HttpGet("tasks")]
+        public async Task<IActionResult> GetAllCategoriesWithTasks()
+        {
+            return ApiReturn(await _userCategoryService.GetAllWithTasksByUserIdAnd(User.GetAuthorizedUserId(), true));
         }
         #endregion
 
         #region create - update - delete
-
         [HttpPost]
-        public async Task<IActionResult> CreateUserCategory([FromBody] UserCategoryRequest value)
+        public async Task<IActionResult> CreateUserCategory([FromBody] UserCategoryRequest userCategoryRequest)
         {
-            var result = await _userCategoryService.InsertAsync(User.GetAuthorizedUserId(), value);
-
-            return result != null
-            ? Created("", new { response = result })
-            : BadRequest(new { error = "Sorry, the category could not be added" });
+            return ApiReturn(await _userCategoryService.InsertAsync(User.GetAuthorizedUserId(), userCategoryRequest));
         }
 
         [HttpPut("{userCategoryId}")]
-        public async Task<IActionResult> UpdateUserCategory([FromRoute] Guid userCategoryId, [FromBody] UserCategoryRequest newValues)
+        public async Task<IActionResult> UpdateUserCategory([FromRoute] Guid userCategoryId, [FromBody] UserCategoryRequest userCategoryRequest)
         {
-            var toBeUpdatedCategory = await _userCategoryService.GetById(userCategoryId);
-            if (toBeUpdatedCategory == null) return NotFound("Category is not exist");
-
-            if (toBeUpdatedCategory.RelatedToGivenUserId(User.GetAuthorizedUserId()))
-            {
-                var result = await _userCategoryService.UpdateAsync(toBeUpdatedCategory, newValues);
-
-                return result != null
-                ? Ok(new { response = result })
-                : BadRequest(new { error = "Sorry, the category could not be updated" });
-            }
-
-            return Forbid();
+            return ApiReturn(await _userCategoryService.UpdateAsync(User.GetAuthorizedUserId(), userCategoryId, userCategoryRequest));
         }
 
         [HttpDelete("{userCategoryId}")]
         public async Task<IActionResult> DeleteUserCategory([FromRoute] Guid userCategoryId)
         {
-            var toBeDeletedCategory = await _userCategoryService.GetById(userCategoryId);
-            if (toBeDeletedCategory == null) return NotFound("Category is not exist");
-
-            if (toBeDeletedCategory.RelatedToGivenUserId(User.GetAuthorizedUserId()))
-            {
-                return await _userCategoryService.DeleteAsync(toBeDeletedCategory)
-                ? Ok()
-                : BadRequest(new { error = "Sorry, the category could not be deleted" });
-            }
-
-            return Forbid();
+            return ApiReturn(await _userCategoryService.DeleteAsync(User.GetAuthorizedUserId(), userCategoryId));
         }
         #endregion
     }

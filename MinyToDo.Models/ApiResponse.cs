@@ -8,9 +8,16 @@ namespace MinyToDo.Models
         {
             Type = _type;
         }
-        public ApiResponse(object _data, ApiResponseType _type)
+
+        public ApiResponse(ApiResponseType _type, object _data)
         {
             Data = _data;
+            Type = _type;
+        }
+        
+        public ApiResponse(ApiResponseType _type, string _message)
+        {
+            Data = _message;
             Type = _type;
         }
 

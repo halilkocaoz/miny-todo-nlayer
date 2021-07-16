@@ -4,7 +4,6 @@ using MinyToDo.Models.Enums;
 
 namespace MinyToDo.WebAPI.Controllers
 {
-    [ApiController]
     public class BaseController : ControllerBase
     {
         [NonAction]
@@ -14,16 +13,25 @@ namespace MinyToDo.WebAPI.Controllers
             {
                 case ApiResponseType.Ok:
                     return Ok(response.Data);
+
                 case ApiResponseType.Created:
                     return StatusCode(201);
+
                 case ApiResponseType.NoContent:
                     return NoContent();
+
+                case ApiResponseType.BadRequest:
+                    return BadRequest(response.Message);
+
                 case ApiResponseType.NotFound:
                     return NotFound(response.Message);
+
                 case ApiResponseType.Unauthorized:
                     return Unauthorized();
+
                 case ApiResponseType.Forbidden:
                     return Forbid();
+                    
                 default:
                     return Accepted();
             }
