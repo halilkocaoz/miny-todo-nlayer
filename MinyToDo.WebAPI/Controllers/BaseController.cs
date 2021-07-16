@@ -21,17 +21,17 @@ namespace MinyToDo.WebAPI.Controllers
                     return NoContent();
 
                 case ApiResponseType.BadRequest:
-                    return BadRequest(response.Message);
+                    return BadRequest(new { response.Message });
 
                 case ApiResponseType.NotFound:
-                    return NotFound(response.Message);
+                    return NotFound(new { response.Message });
 
                 case ApiResponseType.Unauthorized:
                     return Unauthorized();
 
                 case ApiResponseType.Forbidden:
                     return Forbid();
-                    
+
                 default:
                     return Accepted();
             }

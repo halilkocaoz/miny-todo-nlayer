@@ -17,7 +17,7 @@ namespace MinyToDo.Models
         
         public ApiResponse(ApiResponseType _type, string _message)
         {
-            Data = _message;
+            Message = _message;
             Type = _type;
         }
 
