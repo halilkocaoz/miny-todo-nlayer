@@ -2,9 +2,10 @@ namespace MinyToDo.Models.Enums
 {
     public enum ApiResponseType : int
     {
-        Created = 1,
+        Ok = 1,
+        Created,
         NoContent,
-        Ok,
+        BadRequest,
         NotFound,
         Unauthorized,
         Forbidden,
