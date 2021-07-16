@@ -8,15 +8,13 @@ using MinyToDo.Models.Entity;
 
 namespace MinyToDo.WebAPI.Controllers
 {
-    [Route("Api/[controller]")]
-
-    [Authorize]
+    [Authorize, Route("account")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<AppUser> userManager;
         public AccountController(UserManager<AppUser> userManager)
         {
-            _userManager = userManager;
+            this.userManager = userManager;
         }
 
         public class Password
@@ -27,12 +25,12 @@ namespace MinyToDo.WebAPI.Controllers
             public string New { get; set; }
         }
 
-        [HttpPut("Password")]
+        [HttpPatch("password")]
         public async Task<IActionResult> PasswordChange([FromBody] Password value)
         {
-            var authorizedUser = await _userManager.FindByIdAsync(User.GetAuthorizedUserId().ToString());
-            var result = await _userManager.ChangePasswordAsync(authorizedUser, value.Current, value.New);
-            return result.Succeeded ? Ok("Changed") : BadRequest(result.Errors);
+            var authorizedUser = await userManager.FindByIdAsync(User.GetAuthorizedUserId().ToString());
+            var result = await userManager.ChangePasswordAsync(authorizedUser, value.Current, value.New);
+            return result.Succeeded ? NoContent() : BadRequest(result.Errors);
         }
     }
 }
