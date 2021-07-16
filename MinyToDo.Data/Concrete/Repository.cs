@@ -27,10 +27,10 @@ namespace MinyToDo.Data.Concrete
             return await _context.SaveChangesAsync() > 0 ? entity : null;
         }
 
-        public async Task<int> DeleteAsync(TEntity entity)
+        public async Task DeleteAsync(TEntity entity)
         {
             DbSet.Remove(entity);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate)
