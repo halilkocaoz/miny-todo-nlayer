@@ -13,6 +13,8 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+Migrations/
+
 ##
 ## Visual Studio Code
 ##
