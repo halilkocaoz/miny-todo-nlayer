@@ -13,15 +13,15 @@ namespace MinyToDo.Service.Concrete
 {
     public class UserTaskService : IUserTaskService
     {
-        private readonly IMapper _mapper;
-        private readonly IUserTaskRepository taskRepository;
-        private readonly IUserCategoryRepository categoryRepository;
+        private readonly IMapper mapper;
+        private readonly IUserTaskRepository taskUserRepository;
+        private readonly IUserCategoryRepository categoryUserRepository;
 
         public UserTaskService(IMapper mapper, IUserTaskRepository userTaskRepository, IUserCategoryRepository userCategoryRepository)
         {
-            _mapper = mapper;
-            taskRepository = userTaskRepository;
-            categoryRepository = userCategoryRepository;
+            this.mapper = mapper;
+            taskUserRepository = userTaskRepository;
+            categoryUserRepository = userCategoryRepository;
         }
 
         public async Task<ApiResponse> InsertAsync(Guid appUserId, UserTaskRequest userTaskRequest)
@@ -31,7 +31,7 @@ namespace MinyToDo.Service.Concrete
                 return new ApiResponse(Models.Enums.ApiResponseType.BadRequest, "CATEGORY.CANTBENULL");
             }
 
-            var toBeRelatedCategory = await categoryRepository.GetById(userTaskRequest.UserCategoryId);
+            var toBeRelatedCategory = await categoryUserRepository.GetById(userTaskRequest.UserCategoryId);
             if (toBeRelatedCategory == null)
             {
                 return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "CATEGORY.NOTFOUND");
@@ -41,11 +41,11 @@ namespace MinyToDo.Service.Concrete
                 return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
             }
 
-            var newEntity = _mapper.Map<UserTask>(userTaskRequest);
+            var newEntity = mapper.Map<UserTask>(userTaskRequest);
 
             newEntity.ApplicationUserId = appUserId;
             newEntity.CreatedAt = DateTime.Now;
-            await taskRepository.InsertAsync(newEntity);
+            await taskUserRepository.InsertAsync(newEntity);
 
             return new ApiResponse(Models.Enums.ApiResponseType.Created);
         }
@@ -55,7 +55,7 @@ namespace MinyToDo.Service.Concrete
             var wantToChangeRelatedCategory = userTaskRequest.UserCategoryId.HasValue;
             if (wantToChangeRelatedCategory)
             {
-                var selectedCategoryToChange = await categoryRepository.GetById(userTaskRequest.UserCategoryId);
+                var selectedCategoryToChange = await categoryUserRepository.GetById(userTaskRequest.UserCategoryId);
                 if (selectedCategoryToChange == null)
                 {
                     return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "CATEGORY.NOTFOUND");
@@ -66,7 +66,7 @@ namespace MinyToDo.Service.Concrete
                 }
             }
 
-            var toBeUpdatedTask = await taskRepository.GetById(toBeUpdatedTaskId);
+            var toBeUpdatedTask = await taskUserRepository.GetById(toBeUpdatedTaskId);
             if (toBeUpdatedTask == null)
             {
                 return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "TASK.NOTFOUND");
@@ -77,15 +77,15 @@ namespace MinyToDo.Service.Concrete
                 return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
             }
 
-            _mapper.Map(userTaskRequest, toBeUpdatedTask);
-            await taskRepository.UpdateAsync(toBeUpdatedTask);
+            mapper.Map(userTaskRequest, toBeUpdatedTask);
+            await taskUserRepository.UpdateAsync(toBeUpdatedTask);
 
             return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
         public async Task<ApiResponse> DeleteAsync(Guid appUserId, Guid toBeDeletedTaskId)
         {
-            var toBeDeletedTask = await taskRepository.GetById(toBeDeletedTaskId);
+            var toBeDeletedTask = await taskUserRepository.GetById(toBeDeletedTaskId);
             if (toBeDeletedTask == null)
             {
                 return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "TASK.NOTFOUND");
@@ -95,14 +95,14 @@ namespace MinyToDo.Service.Concrete
                 return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
             }
 
-            await taskRepository.DeleteAsync(toBeDeletedTask);
+            await taskUserRepository.DeleteAsync(toBeDeletedTask);
             return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
         public async Task<ApiResponse> GetAllByCategoryIdAsync(Guid appUserId, Guid userCategoryId)
         {
-            var userTasks = _mapper.Map<IEnumerable<UserTaskResponse>>(
-                await taskRepository.GetAll(x => x.ApplicationUserId == appUserId && x.UserCategoryId == userCategoryId));
+            var userTasks = mapper.Map<IEnumerable<UserTaskResponse>>(
+                await taskUserRepository.GetAll(x => x.ApplicationUserId == appUserId && x.UserCategoryId == userCategoryId));
 
             return new ApiResponse(Models.Enums.ApiResponseType.Ok, userTasks);
         }

@@ -13,19 +13,13 @@ namespace MinyToDo.WebAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddDepencies(Configuration);
-            services.AddIdentities(Configuration);
+            services.AddCustomServices(Configuration);
+            services.AddAuth(Configuration);
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -43,7 +37,6 @@ namespace MinyToDo.WebAPI
             services.AddControllers().AddNewtonsoftJson();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

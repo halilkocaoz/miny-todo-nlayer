@@ -14,14 +14,14 @@ namespace MinyToDo.WebAPI.Controllers
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IJwtTokenService jwtTokenService;
-        private readonly IUserCategoryService userCategoryService;
+        private readonly IUserCategoryService categoryUserService;
         private readonly IMapper mapper;
         public AuthController(IMapper mapper, IJwtTokenService jwtTokenService, UserManager<AppUser> userManager, IUserCategoryService userCategoryService)
         {
             this.mapper = mapper;
             this.jwtTokenService = jwtTokenService;
             this.userManager = userManager;
-            this.userCategoryService = userCategoryService;
+            this.categoryUserService = userCategoryService;
         }
 
         [HttpPost("signup")]
@@ -35,7 +35,7 @@ namespace MinyToDo.WebAPI.Controllers
             if (result.Succeeded)
             {
                 #pragma warning disable 4014 // creating default UserCategory for new signing up user.
-                userCategoryService.InsertAsync(newAppUser.Id, new UserCategoryRequest { Name = "General" });
+                categoryUserService.InsertAsync(newAppUser.Id, new UserCategoryRequest { Name = "General" });
                 #pragma warning disable 4014
 
                 var token = jwtTokenService.CreateToken(newAppUser);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using MinyToDo.Abstract.Repositories;
@@ -13,25 +14,25 @@ namespace MinyToDo.Service.Concrete
 {
     public class UserCategoryService : IUserCategoryService
     {
-        private readonly IUserCategoryRepository categoryRepository;
-        private readonly IMapper _mapper;
+        private readonly IUserCategoryRepository categoryUserRepository;
+        private readonly IMapper mapper;
 
         public UserCategoryService(IUserCategoryRepository userCategoryRepository, IMapper mapper)
         {
-            _mapper = mapper;
-            categoryRepository = userCategoryRepository;
+            this.mapper = mapper;
+            categoryUserRepository = userCategoryRepository;
         }
 
         public async Task<ApiResponse> InsertAsync(Guid appUserId, UserCategoryRequest categoryRequest)
         {
-            var newCategoryResponse = _mapper.Map<UserCategoryResponse>(await categoryRepository.InsertAsync(new UserCategory(appUserId, categoryRequest)));
+            var newCategoryResponse = mapper.Map<UserCategoryResponse>(await categoryUserRepository.InsertAsync(new UserCategory(appUserId, categoryRequest)));
 
             return new ApiResponse(Models.Enums.ApiResponseType.Created, newCategoryResponse);
         }
 
         public async Task<ApiResponse> UpdateAsync(Guid appUserId, Guid toBeUpdatedCategoryId, UserCategoryRequest userCategoryRequest)
         {
-            var toBeUpdatedCategory = await categoryRepository.GetById(toBeUpdatedCategoryId);
+            var toBeUpdatedCategory = await categoryUserRepository.GetById(toBeUpdatedCategoryId);
             if (toBeUpdatedCategory == null)
             {
                 return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "CATEGORY.NOTFOUND");
@@ -43,14 +44,14 @@ namespace MinyToDo.Service.Concrete
             }
 
             toBeUpdatedCategory.Name = userCategoryRequest.Name;
-            await categoryRepository.UpdateAsync(toBeUpdatedCategory);
+            await categoryUserRepository.UpdateAsync(toBeUpdatedCategory);
 
             return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
         public async Task<ApiResponse> DeleteAsync(Guid appUserId, Guid toBeDeletedCategoryId)
         {
-            var toBeDeletedCategory = await categoryRepository.GetById(toBeDeletedCategoryId);
+            var toBeDeletedCategory = await categoryUserRepository.GetById(toBeDeletedCategoryId);
             if (toBeDeletedCategory == null)
             {
                 return new ApiResponse(Models.Enums.ApiResponseType.NotFound, "CATEGORY.NOTFOUND");
@@ -61,17 +62,18 @@ namespace MinyToDo.Service.Concrete
                 return new ApiResponse(Models.Enums.ApiResponseType.Forbidden);
             }
             
-            await categoryRepository.DeleteAsync(toBeDeletedCategory);
+            await categoryUserRepository.DeleteAsync(toBeDeletedCategory);
             return new ApiResponse(Models.Enums.ApiResponseType.NoContent);
         }
 
         public async Task<ApiResponse> GetAllWithTasksByUserId(Guid appUserId, bool withTasks)
         {
             IEnumerable<UserCategoryResponse> data = null;
-
+            Expression<Func<UserCategory, bool>>  whereExpression = userCategory => userCategory.ApplicationUserId == appUserId;
+            
             data = withTasks
-                ? _mapper.Map<IEnumerable<UserCategoryResponse>>(await categoryRepository.GetAllWithTasksAsync(userCategory => userCategory.ApplicationUserId == appUserId))
-                : _mapper.Map<IEnumerable<UserCategoryResponse>>(await categoryRepository.GetAll(userCategory => userCategory.ApplicationUserId == appUserId));
+                ? mapper.Map<IEnumerable<UserCategoryResponse>>(await categoryUserRepository.GetAllWithTasksAsync(whereExpression))
+                : mapper.Map<IEnumerable<UserCategoryResponse>>(await categoryUserRepository.GetAll(whereExpression));
 
             return new ApiResponse(Models.Enums.ApiResponseType.Ok, data);
         }

@@ -17,7 +17,7 @@ namespace MinyToDo.WebAPI.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddIdentities(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
@@ -30,7 +30,7 @@ namespace MinyToDo.WebAPI.Extensions
                 };
             });
 
-            services.AddIdentityCore<AppUser>(options =>
+            services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 4;
@@ -40,12 +40,11 @@ namespace MinyToDo.WebAPI.Extensions
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
             })
-            .AddRoles<AppRole>()
             .AddEntityFrameworkStores<MinyToDoContext>();
 
             return services;
         }
-        public static IServiceCollection AddDepencies(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCustomServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddTransient<IUserCategoryService, UserCategoryService>();
