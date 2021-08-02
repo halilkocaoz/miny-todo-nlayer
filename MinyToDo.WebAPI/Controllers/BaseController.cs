@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using MinyToDo.Models;
 using MinyToDo.Models.Enums;
@@ -7,34 +8,17 @@ namespace MinyToDo.WebAPI.Controllers
     public class BaseController : ControllerBase
     {
         [NonAction]
-        public IActionResult ApiReturn(ApiResponse response)
+        public IActionResult ApiReturn(ApiResponse response) => response.Type switch
         {
-            switch (response.Type)
-            {
-                case ApiResponseType.Ok:
-                    return Ok(response.Data);
+            ApiResponseType.Ok              => Ok(new { response.Data }),
+            ApiResponseType.Created         => StatusCode(201),
+            ApiResponseType.NoContent       => NoContent(),
 
-                case ApiResponseType.Created:
-                    return StatusCode(201);
-
-                case ApiResponseType.NoContent:
-                    return NoContent();
-
-                case ApiResponseType.BadRequest:
-                    return BadRequest(new { response.Message });
-
-                case ApiResponseType.NotFound:
-                    return NotFound(new { response.Message });
-
-                case ApiResponseType.Unauthorized:
-                    return Unauthorized();
-
-                case ApiResponseType.Forbidden:
-                    return Forbid();
-
-                default:
-                    return Accepted();
-            }
-        }
+            ApiResponseType.BadRequest      => BadRequest(new { response.Message }),
+            ApiResponseType.NotFound        => NotFound(new { response.Message }),
+            ApiResponseType.Unauthorized    => Unauthorized(),
+            ApiResponseType.Forbidden       => Forbid(),
+            _                               => throw new ArgumentOutOfRangeException(nameof(response.Type)),
+        };
     }
 }

@@ -8,3 +8,5 @@ r:
 	cd ./MinyToDo.WebAPI/ && dotnet run && cd ..
 wr:
 	cd ./MinyToDo.WebAPI/ && dotnet watch run && cd ..
+res:
+	cd ./MinyToDo.WebAPI/ && dotnet restore && cd ..
