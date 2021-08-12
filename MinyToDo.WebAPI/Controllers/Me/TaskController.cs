@@ -8,7 +8,7 @@ using MinyToDo.Models.DTO.Request;
 
 namespace MinyToDo.WebAPI.Controllers.Me
 {
-    [Authorize, ApiController, Route("me/tasks")]
+    [Authorize(AuthenticationSchemes = "Bearer"), ApiController, Route("me/tasks")]
     public class TaskController : BaseController
     {
         private readonly IUserTaskService taskUserService;

@@ -8,7 +8,7 @@ using MinyToDo.Models.DTO.Request;
 
 namespace MinyToDo.WebAPI.Controllers.Me
 {
-    [Authorize, ApiController, Route("me/categories")]
+    [Authorize(AuthenticationSchemes = "Bearer"), ApiController, Route("me/categories")]
     public class CategoryController : BaseController
     {
         private readonly IUserCategoryService categoryUserService;

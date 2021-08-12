@@ -8,7 +8,7 @@ using MinyToDo.Models.Entity;
 
 namespace MinyToDo.WebAPI.Controllers
 {
-    [Authorize, Route("account")]
+    [Authorize(AuthenticationSchemes = "Bearer"), Route("account")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
@@ -25,7 +25,7 @@ namespace MinyToDo.WebAPI.Controllers
             public string New { get; set; }
         }
 
-        [HttpPatch("password")]
+        [HttpPut("password")]
         public async Task<IActionResult> PasswordChange([FromBody] Password value)
         {
             var authorizedUser = await userManager.FindByIdAsync(User.GetAuthorizedUserId().ToString());
