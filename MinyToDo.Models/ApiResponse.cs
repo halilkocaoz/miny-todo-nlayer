@@ -4,25 +4,25 @@ namespace MinyToDo.Models
 {
     public class ApiResponse
     {
-        public ApiResponse(ApiResponseType _type)
+        public ApiResponse(ApiResponseStatus status)
         {
-            Type = _type;
+            StatusCode = (int)status;
         }
 
-        public ApiResponse(ApiResponseType _type, object _data)
+        public ApiResponse(ApiResponseStatus status, object _data)
         {
             Data = _data;
-            Type = _type;
+            StatusCode = (int)status;
         }
         
-        public ApiResponse(ApiResponseType _type, string _message)
+        public ApiResponse(ApiResponseStatus status, string _message)
         {
             Message = _message;
-            Type = _type;
+            StatusCode = (int)status;
         }
 
         public object Data { get; set; }
         public string Message { get; set; }
-        public ApiResponseType Type { get; set; }
+        public int StatusCode { get; set; }
     }
 }
